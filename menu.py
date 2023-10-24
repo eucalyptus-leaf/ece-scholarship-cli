@@ -7,6 +7,14 @@ ECE Scholarship Project
 Description: This program sorts and matches students with scholarships
 """
 
+def print_main_menu():
+    print("Main Menu:\n")
+    print("1. Print Scholarship List")
+    print("2. Print Student List")
+    print("3. Print Matched Scholarships")
+    print("4. Save in text file")
+    print("5. Quit\n")
+
 # Prompt the user for input with a clear message
 print("|************************************|")
 print("| Welcome to the Scholarship Program |")
