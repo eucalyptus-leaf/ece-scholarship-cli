@@ -1,7 +1,32 @@
+'''-------------------------------------------------------------------
+File name: program.py
+Description: This file contains the main user intertface and options
+             for the scholarship application project
+
+ECE Scholarship Application
+Team 32
+Jan 2024
+-------------------------------------------------------------------'''
+
 import os
 import pandas as pd 
 
+def print_message():
+    #----------------------------------------------------------
+    # Function to print greeting message at the beginning
+    #----------------------------------------------------------
+    # Prompt the user for input with a clear message
+    print("|*************************************|")
+    print("| Welcome to the Scholarship Program  |")
+    print("| Please enter the name of the folder.|")
+    print("|*************************************|\n")
+    #folder_name = input("Folder Name on Desktop: ")
+
+
 def print_main_menu():
+    #----------------------------------------------------------
+    # Function to print out Main Menu Options
+    #----------------------------------------------------------
     print("Main Menu:\n")
     print("1. Print Scholarship List")
     print("2. Print Student List")
@@ -13,12 +38,15 @@ def print_main_menu():
 
 
 def read_student_data(folder_path, scholarship_name):
+    #----------------------------------------------------------
+    # Function to print out info about specific scholarship
+    #----------------------------------------------------------
     try:
         # Adjust the scholarship name for ECEGeneral
         if scholarship_name == "ECEGeneral":
             file_path = os.path.join(folder_path, f"{scholarship_name}.xlsx")
         else:
-            file_path = os.path.join(folder_path, f"{scholarship_name}_102023.xlsx")
+            file_path = os.path.join(folder_path, f"{scholarship_name}_Scholarship_102023.xlsx")
 
 
         # Construct the file path for the specific scholarship
@@ -40,6 +68,9 @@ def read_student_data(folder_path, scholarship_name):
 
 
 def read_scholarship_data(folder_path, scholarship_name):
+    #----------------------------------------------------------
+    # Function to print out info from Scholarships folder
+    #----------------------------------------------------------
     try:
         # Construct the file path for the scholarship
         file_path = os.path.join(folder_path, f"{scholarship_name}.xlsx")
@@ -62,6 +93,9 @@ def read_scholarship_data(folder_path, scholarship_name):
         print(f"An error occurred: {e}")
 
 def save_student_and_scholarship_data(folder_path, scholarship_name, output_file):
+    #----------------------------------------------------------
+    # Function to save information into CSV file
+    #----------------------------------------------------------
     try:
         # Construct the file path for the specific scholarship
         file_path = os.path.join(folder_path, f"{scholarship_name}_Scholarship_102023.xlsx")
@@ -89,6 +123,9 @@ def save_student_and_scholarship_data(folder_path, scholarship_name, output_file
         print(f"An error occurred: {e}")
 
 def print_scholarship_names(folder_path):
+    #----------------------------------------------------------
+    # Function to print all scholarship names
+    #----------------------------------------------------------
     scholarship_files = [f for f in os.listdir(folder_path) if f.endswith(".xlsx") and f != "scholarship.xlsx"]
     
     print("\nList of Scholarships (Alphabetical Order):")
@@ -100,6 +137,9 @@ def print_scholarship_names(folder_path):
 
 
 def process_file(folder_path, input_file_name):
+    #----------------------------------------------------------
+    # Function to sort students in scholarship files
+    #----------------------------------------------------------
     if input_file_name == "schplarship.xlsx":
         print(f"Skipping file '{input_file_name}' as it will not be processed.")
         return
@@ -144,6 +184,9 @@ def process_file(folder_path, input_file_name):
 
 
 def calculate_budget(row):
+    #----------------------------------------------------------
+    # Function used to calculate budget for each student
+    #----------------------------------------------------------
     gpa = row['Cumulative GPA']
     grad_date = row['Expected Grad Date']
 
@@ -152,18 +195,18 @@ def calculate_budget(row):
         year, month = map(int, grad_date.split('-'))
 
         if month == 12 and gpa >= 4.0 and year == 2023:  # December graduation with 4.0 GPA
-            return 2000  # Half of the maximum allotted amount
-        elif month == 5 and gpa == 4.0:  # May graduation with 4.0 GPA
-            return 4000  # Maximum allotted amount
-        elif month == 12 and year == 2024 and gpa == 4.0:  # December graduation with GPA decrease in the following academic year
+            return 4000  # Half of the maximum allotted amount
+        if month == 5 and gpa == 4.0:  # May graduation with 4.0 GPA
+            return 2000  # Maximum allotted amount
+        if month == 12 and year == 2024 and gpa == 4.0:  # December graduation with GPA decrease in the following academic year
             return 4000
-        elif month == 5 and year == 2024 and gpa == 4.0:  # May graduation with GPA decrease in the following academic year
+        if month == 5 and year == 2024 and gpa == 4.0:  # May graduation with GPA decrease in the following academic year
             return 3000
-        elif month == 12 and gpa <= 4.0 and gpa > 3.8 and year == 2023:
+        if month == 12 and gpa <= 4.0 and gpa > 3.8 and year == 2023:
             return 3500
-        elif month == 12 and gpa <= 3.8 and gpa > 3.6 and year == 2023:
+        if month == 12 and gpa <= 3.8 and gpa > 3.6 and year == 2023:
             return 3000
-        elif month == 12 and gpa <= 3.6 and gpa > 3.4 and year == 2023:
+        if month == 12 and gpa <= 3.6 and gpa > 3.4 and year == 2023:
             return 2500
         else:
             return 1000  # Default case if none of the conditions are met
@@ -171,6 +214,9 @@ def calculate_budget(row):
     return 0  # Default value if conditions are not met
 
 def duplicate_and_update_excel(input_path, output_path):
+    #----------------------------------------------------------
+    # Function used to update the scholarship files
+    #----------------------------------------------------------
     # Read the original Excel file
     df = pd.read_excel(input_path)
 
@@ -182,12 +228,7 @@ def duplicate_and_update_excel(input_path, output_path):
 
 
 
-# Prompt the user for input with a clear message
-print("|*************************************|")
-print("| Welcome to the Scholarship Program  |")
-print("| Please enter the name of the folder.|")
-print("|*************************************|\n")
-#folder_name = input("Folder Name on Desktop: ")
+print_message()
 
 while True:
     folder_name = input("Enter Folder Name: ")
