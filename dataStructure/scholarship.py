@@ -2,8 +2,6 @@
 This module contains the Scholarship class which represents a scholarship.
 """
 
-from linked_list import LinkedList
-
 class Scholarship:
     """
     The Scholarship class represents a scholarship.
