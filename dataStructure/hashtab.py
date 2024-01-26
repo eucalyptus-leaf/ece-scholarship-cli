@@ -1,5 +1,11 @@
 # hashtab.py
 
+# maintab = new(Hashtab)
+# ...
+# student = new(Student)
+# maintab.insert(student.student_id, student)
+# ... do this recusively for all students
+
 
 class Hashtab:
     def __init__(self, size=100):

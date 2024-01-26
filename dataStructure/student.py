@@ -2,6 +2,8 @@
 This module contains the Student class which represents a student.
 """
 
+# x = new(Student)
+# x.first_name = "John"
 class Student:
     """
     The Student class represents a student.
