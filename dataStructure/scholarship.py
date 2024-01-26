@@ -23,8 +23,8 @@ class Scholarship:
         self.budget = budget
         self.num_awards = num_awards
         self.priority = priority
-        self.criteria = set()
-        self.students = LinkedList()
+        self.criteria = dict()
+        self.students = set()
 
     def add_criteria(self, criteria):
         """
@@ -32,7 +32,7 @@ class Scholarship:
 
         :param criteria: The criteria to add.
         """
-        self.criteria.add(criteria)
+        self.criteria.update(criteria)
         
 
     def remove_criteria(self, criteria):
@@ -41,7 +41,7 @@ class Scholarship:
 
         :param criteria: The criteria to remove.
         """
-        self.criteria.discard(criteria)
+        self.criteria.pop(criteria)
 
 
     def search_criteria(self, criteria):
@@ -60,7 +60,7 @@ class Scholarship:
 
         :param student_id: The unique identifier of the student to add.
         """
-        self.students.insert_sorted(student_id)
+        self.students.add(student_id)
 
 
     def remove_student(self, student_id):

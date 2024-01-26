@@ -8,7 +8,7 @@ class Student:
     """
     The Student class represents a student.
     """
-    def __init__(self, first_name, last_name, student_id):
+    def __init__(self):
         """
         Initializes a new instance of the Student class.
 
@@ -16,11 +16,13 @@ class Student:
         :param last_name: The last name of the student.
         :param student_id: The unique identifier of the student.
         """
-        self.first_name = first_name
-        self.last_name = last_name
-        self.student_id = student_id
-        self.attributes = set()
-        self.applications = {}
+        self.first_name = "Empty"
+        self.last_name = "Empty"
+        self.student_id = -1
+        self.application_id = -1
+        self.email = "Empty"
+        self.budget = -1
+        self.attributes = dict()
 
     def add_attribute(self, attribute):
         """
@@ -28,7 +30,7 @@ class Student:
 
         :param attribute: The attribute to add.
         """
-        self.attributes.add(attribute)
+        self.attributes.update(attribute)
 
     def remove_attribute(self, attribute):
         """
@@ -36,7 +38,7 @@ class Student:
 
         :param attribute: The attribute to remove.
         """
-        self.attributes.discard(attribute)
+        self.attributes.update(attribute)
 
     def search_attributes(self, attribute):
         """
@@ -46,23 +48,6 @@ class Student:
         :return: True if the attribute is found, False otherwise.
         """
         return attribute in self.attributes
-
-    def add_application(self, application):
-        """
-        Adds an application to the student's applications.
-
-        :param application: The application to add.
-        """
-        self.applications[application.scholarship_id] = application
-
-    def remove_application(self, scholarship_id):
-        """
-        Removes an application from the student's applications.
-
-        :param scholarship_id: The unique identifier of the scholarship being applied to.
-        """
-        if scholarship_id in self.applications:
-            del self.applications[scholarship_id]
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} ({self.student_id})'
