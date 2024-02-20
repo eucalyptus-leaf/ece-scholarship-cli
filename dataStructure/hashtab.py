@@ -58,6 +58,10 @@ class Hashtab:
                 return
 
     
-class StudentTab(Hashtab):
-	def __init__(self, capacity=100):
-		Hashtab.__init__(self, capacity)
+class ScholarshipSystem():
+    department_budget = -1
+    def __init__(self, capacity=100):
+        working_budget = -1
+        student_table = Hashtab(capacity)
+        scholarship_table = Hashtab(capacity)
+

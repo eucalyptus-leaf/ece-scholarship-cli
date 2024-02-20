@@ -4,7 +4,11 @@ from student import Student
 def main():
 	studenttab = Hashtab()
 	for i in range(3):
-		student = Student("Student " + str(i), "Last Name " + str(i), i)
+		student = Student()
+		student.student_id = i
+		student.first_name = "student_first_name" + str(i)
+		student.last_name = "student_last_name" + str(i)
+		student.budget = 4000 + i
 		studenttab.insert(student.student_id, student)
 		print("inserting student ")
 		print(student)
