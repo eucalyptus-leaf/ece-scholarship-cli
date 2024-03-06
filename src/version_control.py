@@ -21,12 +21,19 @@ def check_python_version():
     if sys.version_info < tuple(map(int, REQUIRED_PYTHON.split('.'))):
         raise AssertionError(f"Python {REQUIRED_PYTHON} or later is required.")
 
-def check_package_versions(required_packages=REQUIRED_PACKAGES):
+def check_package_versions(required_packages):
     for package, required_version in required_packages.items():
         installed_version = pkg_resources.get_distribution(package).version
-        if installed_version != required_version:
-            raise AssertionError(f"Package {package} requires version {required_version}, found version {installed_version}.")
+        # if installed package version is less than the required version, raise an error
+        # else let is pass
+        # if installed_version != required_version:
+        #     raise AssertionError(f"Package {package} requires version {required_version}, found version {installed_version}.")
 
+        if installed_version < required_version:
+            raise AssertionError(f"{package} version {required_version} or later is required, but {installed_version} is installed.")
+
+
+        
 def find_dependencies_file(start_dir, max_look_back=1, current_look_back=0):
     if current_look_back > max_look_back:
         raise FileNotFoundError("Could not find dependencies.txt file within the maximum look back limit.")
@@ -41,7 +48,7 @@ def find_dependencies_file(start_dir, max_look_back=1, current_look_back=0):
         return find_dependencies_file(parent_dir, max_look_back, current_look_back + 1)
     raise FileNotFoundError("Could not find dependencies.txt file in the directory tree.")
 
-def main():
+def version_control():
     try:
         # Get the directory of the current script
         curr_dir = os.path.dirname(os.path.abspath(__file__))
@@ -58,6 +65,9 @@ def main():
     except (AssertionError, FileNotFoundError) as e:
         print(f"Version check failed: {e}")
         sys.exit(1)
+
+def main():
+    version_control()
 
 if __name__ == "__main__":
     main()

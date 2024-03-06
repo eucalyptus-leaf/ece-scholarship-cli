@@ -1,3 +1,6 @@
+# Directory Ignores
+data/
+
 # Apple Hidden Files
 .DS_Store
 

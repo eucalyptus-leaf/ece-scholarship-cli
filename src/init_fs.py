@@ -8,11 +8,14 @@ def create_directory(path):
         print(f"Directory {path} already exists")
 
 def setup_project_structure(root_dir):
-    directories = ['data']
+    data_dir = 'data'
+    data_directories = ['scholarships', 'general_application', 'output']
 
-    for dir in directories:
-        create_directory(os.path.join(root_dir, dir))
-    
+    create_directory(os.path.join(root_dir, data_dir))
+
+    for dir in data_directories:
+        create_directory(os.path.join(root_dir, data_dir, dir))
+
     print("Project structure created")
 
 def init_fs():
@@ -20,6 +23,9 @@ def init_fs():
     print(f"Setting up project structure in: {root_dir}")
     setup_project_structure(root_dir)
 
+
+def main():
+    init_fs()
 
 if __name__ == "__main__":
     main()

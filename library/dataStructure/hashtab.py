@@ -6,7 +6,6 @@
 # maintab.insert(student.student_id, student)
 # ... do this recusively for all students
 
-
 class Hashtab:
     def __init__(self, size=100):
         self.size = size
@@ -56,12 +55,8 @@ class Hashtab:
                     new_size = max(self.size // 2, 10)
                     self._resize(new_size)
                 return
-
-    
-class ScholarshipSystem():
-    department_budget = -1
-    def __init__(self, capacity=100):
-        working_budget = -1
-        student_table = Hashtab(capacity)
-        scholarship_table = Hashtab(capacity)
-
+            
+    def __iter__(self):
+        for bucket in self.table:
+            for key, value in bucket:
+                yield key, value
