@@ -6,6 +6,7 @@ from library.dataStructure.student import Student
 from library.dataStructure.scholarship import Scholarship
 from library.dataStructure.budget_system import BudgetSystem
 from library.dataStructure.import_data import *
+
 from src.init_fs import init_fs as ifs
 from src.version_control import version_control as vc
 
@@ -17,35 +18,27 @@ def main():
 	vc()
 	ifs()
 
+	project_path = os.path.dirname(__file__)
+	print("Project Directory Path: " + project_path + "\n")
+
 	data_path = os.path.join(os.path.dirname(__file__), "data")
-
-
+	lib_path = os.path.join(os.path.dirname(__file__), "library")
+	src_path = os.path.join(os.path.dirname(__file__), "src")
+	
 	studenttab = Hashtab()
+	print("Student Table Created\n")
 	budget = BudgetSystem()
+	print("Budget System Created\n")
+	headers = Headers()
+	headers.normalize_and_save_headers(os.path.join(lib_path, "dataStructure/headers.txt"), os.path.join(lib_path, "dataStructure/normalized_headers.txt"))
+	print("Headers Created\n")
 
 	# while(True):
 	# 	scholarship_cli()
 
 	# call import_students_from_file using the file in the data/general_application directory using os and allow wildcard names for the file in the directory
-	import_students_from_file(os.path.join(data_path, "general_application"), studenttab)
 	
-	print(studenttab.search(200350644))
-
-	for i in range(3):
-		student = Student()
-		student.student_id = i
-		student.first_name = "student_first_name" + str(i)
-		student.last_name = "student_last_name" + str(i)
-		student.budget = 4000 + i
-		studenttab.insert(student.student_id, student)
-		print("inserting student ")
-		print(student)
-		print("\n")
-	
-	print(studenttab.search(1))
-	print(studenttab.search(2))
-	print(studenttab.search(3))
-	studenttab.delete(2)
-
+	import_students_from_file(os.path.join(data_path, "general_application"), studenttab, headers)
+	print("Imported Students\n")
 if __name__ == "__main__":
 	main()

@@ -1,0 +1,110 @@
+View
+ID
+Category
+Categorized At
+Qualification Points
+Name
+Primary Email
+Award Period
+Amount Offered
+General Application Score
+Conditional Application Score
+Opportunity Score
+Reviewer Score
+Assigned Reviews
+Completed Reviews
+Encumbered Funds
+Encumbered Applications
+Renewal Funds
+Renewal Applications
+General Application Essay Instructions:  The following essay questions may be similar to questions you have answered as part of the admission process or other scholarship processes.  You may use or modify the same response you have provided for other applications. <p></p><p>New Students:  Describe Your reasons for selecting your chosen academic program/major and why you are interested in studying it at NC State.  </p><p>Returning Students:  Explain why you selected your chosen academic program/major and how it is related to your career aspirations.</p>
+Describe a situation, event, or experience that created personal change for you or influenced a different understanding of yourself or others.
+NC State is a community of individuals who value the mission of preparing students to examine and meet the needs of the State of North Carolina and beyond.  The philosophy of careful thought and deliberate action ("Think and Do") is embraced.  Describe how you see yourself contributing to this community and/or philosophy.
+The COVID-19 global pandemic and impacts from natural disasters have profound impacts for students.  If you experienced these impacts, please describe to us those impacts and how you adapted to or have overcome these challenges.
+If you wish, please provide any information you have not had the opportunity to share elsewhere in your application.
+Continuing NC State students, please upload a copy of your degree audit or your unofficial NC State transcript after fall grades have posted.
+What is your expected graduation date from college? 
+1. Name of Activity or Employment
+1a. Activity Category
+2. Title of Office Held (if applicable)
+2a. If you held office, were you appointed or elected?
+3. Location
+3a. Did you participate in this activity or employment during high school or while in college? 
+4. Start Date
+5. End Date
+6. Number of hours devoted to this activity per week
+7. Description
+1. Name of Honor/Award/Certification/Workshop
+2. Date Awarded/Completed
+3. Did you earn this while in High School or in College? 
+4. Basis of Selection/Details
+I am planning to study abroad sometime during the upcoming academic year.<p><em>This includes Fall 2023, Spring 2024, or Summer 2024</em></p>
+Please select ALL the statements below that apply to you.  
+Student Employment: If applicable, please select the employer you were previously, or are currently, employed by.
+Military/ROTC Affiliation: Please select all that apply to you. 
+Please select the company that your parents (or in noted cases, grandparents) are employed by, if applicable. 
+I am a currently enrolled student (not an incoming freshman) who is enrolled in or plans to enroll in, a Paper Science and Engineering (PSE) course : 
+I participate in the following Arts program(s) at NC State:
+Describe your experiences with Arts NC State program(s), classes, or minors. If this does not apply to you, please skip the question.
+How has being involved in Arts at NC State impacted your experience as a student at NC State University? If you have not been involved in Arts at  NC State University, please skip this question.
+Do you participate in Color Guard or Majorettes?
+I certify that I am submitting my application as of today's date. 
+Authorization Statement: <p>North Carolina State University is committed to respecting your privacy. Any personal information you submit through this online scholarship application website, Pack ASSIST, will be used by North Carolina State University to determine your eligibility for scholarships. </p><p></p><p>With the submission of this application, you certify your acknowledgement that information or content could pass through and may be stored on a computer server maintained by Blackbaud, an externally-hosted third-party software company. This information is necessary to make informed scholarship decisions, and includes answers submitted on this application, letters of recommendation (if applicable) and necessary academic, directory and demographic information transferred from student records. </p><p>Your submission of this application also grants permission to officials at North Carolina State University to release your application information to the donor of your scholarship, if you're selected. </p><p>By submitting this application, you also certify that all information given on this application is true and accurate at the time it is filed.</p>
+Student ID
+Last Name
+First Name
+Middle Name
+Residency
+Residency Detail
+Acad Level
+Acad Prog
+Major Description
+Major SubPlan Description
+Minor Description
+Minor SubPlan Description
+Cumulative GPA
+Fed Need Acad 
+Active Flag
+Total Credits Earned
+City
+State
+1. Personal
+2. Student Programs, Groups &amp; Professional Societies
+3. Honor Society
+4. High School information 
+5. Are you a graduate of a rural North Carolina high school?
+If there is an organization you are affiliated with that is not listed above, please enter that information here. 
+1. Have you or do you intend to participate in a co-op?
+2. If you answered yes above, what term do you intend to participate in a co-op? 
+Terms and Conditions: You must agree to the following terms and conditions before completing your application. * I must remain a full-time student. I must be continuously enrolled for a minimum of 12 credit hours to be eligible for new or continuing engineering scholarship funds (does not apply to final semester). * I must remain in a College of Engineering degree program. If I receive a department scholarship, I must remain in that degree program to keep the scholarship. * Scholarships are credited to my student financial account. Scholarship funds are not paid out by cash, check or any other means except electronically. * Scholarships are not paid during co-op or internship semesters. Scholarship funds are not transferable to other semesters or academic years. * The information I provide in this application is private. My information will be used only in connection with the College of Engineering scholarship process. * I must maintain satisfactory academic progress. Complying with the requirements of my specific awards.
+Waiver: Your answer will not affect your scholarship consideration. * I hereby give North Carolina State University College of Engineering permission to release information to the news media regarding academic honors and awards that I have or may receive. Such information may include, but is not limited to, my name, my hometown, the high school I attended, my class rank, scholarships I have received and other honors I have received. I understand that I will have no recourse for the release of information regarding my honors, awards and academic standing.	
+Freshman Pulp &amp; Paper schp received?
+Invite to Pulp &amp; Paper Super Scholars? 
+Aid Year
+Expected Grad Date
+Major Owner Description
+Major Code
+Major SubPlan Code
+Major GPA
+Major Credits Earned
+Minor Code
+Admit Term
+Admit Type
+Unweighted GPA HS/TRF
+HS Weighted GPA
+NC State Credits Earned
+Total Credits Remaining 
+High School/Transfer School
+Percentile in HS
+Class Rank HS
+Class Size HS
+SAP Status
+Dad Hi Educ Lvl
+Mom Hi Educ Lvl
+Program Status
+Goodnight Decision
+Park Decision
+Textiles Decision
+Shelton Decision
+Super Scholars Decision
+Transformational Scholar Decision

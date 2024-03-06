@@ -8,16 +8,17 @@ class Student:
     """
     The Student class represents a student.
     """
-    def __init__(self, first_name="Empty", last_name="Empty", student_id=-1, application_id=-1, email="Empty", budget=-1):
+    def __init__(self, fn="Empty", ln="Empty", mn="Empty", sid=-1, aid=-1, e="Empty", b=-1):
         """
         Initializes a new instance of the Student class.
         """
-        self.first_name = first_name
-        self.last_name = last_name
-        self.student_id = student_id
-        self.application_id = application_id
-        self.email = email
-        self.budget = budget
+        self.first_name = fn
+        self.middle_name = mn
+        self.last_name = ln
+        self.student_id = sid
+        self.application_id = aid
+        self.email = e
+        self.budget = b
         self.attributes = dict()
 
     def add_attribute(self, key, value):
