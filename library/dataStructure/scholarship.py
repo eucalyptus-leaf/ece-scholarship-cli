@@ -6,7 +6,7 @@ class Scholarship:
     """
     The Scholarship class represents a scholarship.
     """
-    def __init__(self, scholarship_id, name, budget, num_awards, priority, criteria=None):
+    def __init__(self, scholarship_id=-1, name="None", budget=-1, num_awards=-1, priority=-1):
         """
         Initializes a new instance of the Scholarship class.
 
@@ -19,10 +19,11 @@ class Scholarship:
         self.scholarship_id = scholarship_id
         self.name = name
         self.budget = budget
+        self.working_budget = budget
         self.num_awards = num_awards
         self.priority = priority
         self.criteria = dict()
-        self.students = set()
+        self.students = []
 
     def add_criteria(self, criteria):
         """

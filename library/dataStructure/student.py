@@ -19,6 +19,8 @@ class Student:
         self.application_id = aid
         self.email = e
         self.budget = b
+        self.priority = -1
+        self.awarded = []
         self.attributes = dict()
 
     def add_attribute(self, key, value):

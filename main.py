@@ -25,8 +25,10 @@ def main():
 	lib_path = os.path.join(os.path.dirname(__file__), "library")
 	src_path = os.path.join(os.path.dirname(__file__), "src")
 	
-	studenttab = Hashtab()
+	studentTab = Hashtab()
 	print("Student Table Created\n")
+	scholarshipTab = Hashtab()
+	print("Scholarship Table Created\n")
 	budget = BudgetSystem()
 	print("Budget System Created\n")
 	headers = Headers()
@@ -38,7 +40,9 @@ def main():
 
 	# call import_students_from_file using the file in the data/general_application directory using os and allow wildcard names for the file in the directory
 	
-	import_students_from_file(os.path.join(data_path, "general_application"), studenttab, headers)
+	import_students_from_file(os.path.join(data_path, "general_application"), studentTab, headers)
+	import_scholarships_from_file(os.path.join(data_path, "scholarships"), scholarshipTab, studentTab, headers)
+
 	print("Imported Students\n")
 if __name__ == "__main__":
 	main()

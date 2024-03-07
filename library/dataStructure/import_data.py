@@ -3,6 +3,7 @@ import os
 import glob
 import pandas as pd
 from library.dataStructure.student import Student
+from library.dataStructure.scholarship import Scholarship
 
 
 class Headers:
@@ -85,6 +86,55 @@ def import_students_from_file(folder_path, studentTab, h):
     return True
 
 
+def _extract_scholarship_id(view_column_data):
+    # Using regex to extract the ID from the href link
+    match = re.search(r'opportunities/(\d+)/applications', view_column_data)
+    if match:
+        return match.group(1)  # Return the extracted ID
+    else:
+        return None  # Or some default value or raise an exception
+    
 
-def import_scholarships_from_file(csv_path):
-    pass
+def import_scholarships_from_file(folder_path, scholarshipTab, studentTab, h):
+    try:
+        files = [f for f in os.listdir(folder_path) if f.endswith(('.csv', '.xlsx', '.xls')) and os.path.isfile(os.path.join(folder_path, f))]
+        if len(files) == 0:
+            print("No files found in the specified directory")
+            return False
+        else:
+            print("Files found in the specified directory: ", len(files))
+            # Process each file
+            for file in files:
+                print("Processing file: ", file)
+                file_path = os.path.join(folder_path, file)
+                
+                # Read the file into a DataFrame
+                if file_path.endswith('.csv'):
+                    df = pd.read_csv(file_path)
+                elif file_path.endswith(('.xlsx', '.xls')):
+                    df = pd.read_excel(file_path)
+                else:
+                    print("Error: File type not supported")
+                    continue  # Skip unsupported file types
+                
+                # Process each row in the DataFrame
+                for index, row in df.iterrows():
+                    if index == 0:
+                        scholarship = Scholarship()
+
+                    id = _extract_scholarship_id(row[h.headers[0]])
+                    if id is None:
+                        print("Error: Could not extract scholarship ID")
+                        continue  # Skip if ID can't be extracted
+                    
+                    # Create Scholarship object and populate with data
+                    scholarship.scholarship_id = id
+                    # Add other scholarship attributes as necessary
+                    scholarship.students.append((row[h.headers[1]], row[h.headers[4]]))
+                    # Add each scholarship to the scholarshipTab
+                    scholarshipTab.insert(scholarship.scholarship_id, scholarship)
+        return True
+    
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
