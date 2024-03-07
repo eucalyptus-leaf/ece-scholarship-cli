@@ -8,7 +8,7 @@ class Student:
     """
     The Student class represents a student.
     """
-    def __init__(self, fn="Empty", ln="Empty", mn="Empty", sid=-1, aid=-1, e="Empty", b=-1):
+    def __init__(self, fn="Empty", ln="Empty", mn="Empty", sid=0, aid=0, e="Empty", b=0):
         """
         Initializes a new instance of the Student class.
         """
@@ -19,7 +19,7 @@ class Student:
         self.application_id = aid
         self.email = e
         self.budget = b
-        self.priority = -1
+        self.priority = 0
         self.awarded = []
         self.attributes = dict()
 

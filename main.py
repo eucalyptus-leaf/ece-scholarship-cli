@@ -26,6 +26,7 @@ def main():
 	lib_path = os.path.join(os.path.dirname(__file__), "library")
 	src_path = os.path.join(os.path.dirname(__file__), "src")
 	
+	# Create the Data Stuctures
 	studentTab = Hashtab()
 	print("Student Table Created\n")
 	scholarshipTab = Hashtab()
@@ -34,16 +35,26 @@ def main():
 	print("Budget System Created\n")
 	headers = Headers()
 	headers.normalize_and_save_headers(os.path.join(config_path, "headers.txt"), os.path.join(config_path, "normalized_headers.txt"))
+	headers.save_overview_headers(os.path.join(config_path, "overview_headers.txt"))
 	print("Headers Created\n")
-
-	# while(True):
-	# 	scholarship_cli()
-
-	# call import_students_from_file using the file in the data/general_application directory using os and allow wildcard names for the file in the directory
 	
+	# Import the data
 	import_students_from_file(os.path.join(data_path, "general_application"), studentTab, headers)
-	import_scholarships_from_file(os.path.join(data_path, "scholarships"), scholarshipTab, studentTab, headers)
-
 	print("Imported Students\n")
+	import_scholarships_from_file(os.path.join(data_path, "scholarships"), scholarshipTab, studentTab, headers)
+	print("Imported Scholarships\n")
+	import_overview_scholarships_from_file(os.path.join(data_path, "scholarships/overview"), scholarshipTab, headers)
+	print("Imported Overview Scholarships\n")
+
+	# Initialize the budget system
+	budget.initialize_budget_system(studentTab, scholarshipTab, headers)
+	print("Initialized Budget System\n")
+	
+	# Award scholarships
+
+
+
+
+
 if __name__ == "__main__":
 	main()

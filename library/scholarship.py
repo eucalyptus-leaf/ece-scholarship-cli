@@ -6,7 +6,7 @@ class Scholarship:
     """
     The Scholarship class represents a scholarship.
     """
-    def __init__(self, scholarship_id=-1, name="None", budget=-1, num_awards=-1, priority=-1):
+    def __init__(self, scholarship_id=0, name="None", budget=0, num_awards=0, priority=0):
         """
         Initializes a new instance of the Scholarship class.
 

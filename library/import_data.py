@@ -10,8 +10,10 @@ class Headers:
     def __init__(self):
         self.header_fp = "None"
         self.normalized_fp = "None"
+        self.overview_header_fp = "None"
         self.headers = []
         self.normalized_headers = []
+        self.overview_headers = []
 
     # Function to normalize headers
     def _normalize_header(self, header):
@@ -31,6 +33,11 @@ class Headers:
                 outfile.write(header + '\n')
 
         outfile.close()
+    
+    def save_overview_headers(self, input_file):
+        with open(input_file, 'r') as file:
+            self.overview_headers = [line.strip() for line in file if line.strip()]
+        file.close()
     
     def print_headers(self):
         print(self.headers, '\n')
@@ -90,7 +97,7 @@ def _extract_scholarship_id(view_column_data):
     # Using regex to extract the ID from the href link
     match = re.search(r'opportunities/(\d+)/applications', view_column_data)
     if match:
-        return match.group(1)  # Return the extracted ID
+        return int(match.group(1))  # Return the extracted ID
     else:
         return None  # Or some default value or raise an exception
     
@@ -138,3 +145,44 @@ def import_scholarships_from_file(folder_path, scholarshipTab, studentTab, h):
     except Exception as e:
         print(f"Error: {e}")
         return False
+    
+def import_overview_scholarships_from_file(folder_path, scholarshipTab, h):
+    try:
+        files = [f for f in os.listdir(folder_path) if f.endswith(('.csv', '.xlsx', '.xls')) and os.path.isfile(os.path.join(folder_path, f))]
+        if len(files) == 0:
+            print("No files found in the specified directory")
+            return False
+        else:
+            print("Files found in the specified directory: ", len(files))
+            latest_file = max(files, key=lambda f: os.path.getmtime(os.path.join(folder_path, f)))
+            print("Latest file: ", latest_file)
+            file_path = os.path.join(folder_path, latest_file)
+    except:
+        print("Error: Could not find the specified directory")
+        return False
+    
+    # Read the file into a dataframe
+    if file_path.endswith('.csv'):
+        try:
+            df = pd.read_csv(file_path)
+        except:
+            print(f"Error: Could not read the {file_path}")
+            return False
+    elif file_path.endswith('.xlsx') or file_path.endswith('.xls'):
+        try: 
+            df = pd.read_excel(file_path)
+        except:
+            print(f"Error: Could not read the {file_path}")
+            return False
+    else:
+        print("Error: File type not supported")
+        return False
+    
+    for index, row in df.iterrows():
+        id = row[h.overview_headers[1]]
+        scholarshipTab.get(id).priority = row[h.overview_headers[0]]
+        scholarshipTab.get(id).name = row[h.overview_headers[2]]
+        scholarshipTab.get(id).budget = row[h.overview_headers[3]]
+        scholarshipTab.get(id).criteria = row[h.overview_headers[4]].split('; ')
+
+    return True
