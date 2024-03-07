@@ -1,11 +1,11 @@
 import sys
 import os
 # Now you can import your modules
-from library.dataStructure.hashtab import Hashtab
-from library.dataStructure.student import Student
-from library.dataStructure.scholarship import Scholarship
-from library.dataStructure.budget_system import BudgetSystem
-from library.dataStructure.import_data import *
+from library.hashtab import Hashtab
+from library.student import Student
+from library.scholarship import Scholarship
+from library.budget_system import BudgetSystem
+from library.import_data import *
 
 from src.init_fs import init_fs as ifs
 from src.version_control import version_control as vc
@@ -22,6 +22,7 @@ def main():
 	print("Project Directory Path: " + project_path + "\n")
 
 	data_path = os.path.join(os.path.dirname(__file__), "data")
+	config_path = os.path.join(os.path.dirname(__file__), "config")
 	lib_path = os.path.join(os.path.dirname(__file__), "library")
 	src_path = os.path.join(os.path.dirname(__file__), "src")
 	
@@ -32,7 +33,7 @@ def main():
 	budget = BudgetSystem()
 	print("Budget System Created\n")
 	headers = Headers()
-	headers.normalize_and_save_headers(os.path.join(lib_path, "dataStructure/headers.txt"), os.path.join(lib_path, "dataStructure/normalized_headers.txt"))
+	headers.normalize_and_save_headers(os.path.join(config_path, "headers.txt"), os.path.join(config_path, "normalized_headers.txt"))
 	print("Headers Created\n")
 
 	# while(True):

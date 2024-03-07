@@ -2,8 +2,8 @@ import re
 import os
 import glob
 import pandas as pd
-from library.dataStructure.student import Student
-from library.dataStructure.scholarship import Scholarship
+from library.student import Student
+from library.scholarship import Scholarship
 
 
 class Headers:
