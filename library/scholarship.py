@@ -77,4 +77,11 @@ class Scholarship:
         # The criteria for comparison will depend on the specific criteria for the scholarship.
         """ TODO: Implement a method for determing how the criterion match and how they compare """
         
-        return student2.qualityscore - student1.qualityscore
+        # sort by quality
+        # sort by graduation date
+        # sort by GPA
+
+        score1 = (student1.attributes['Qualification Points'] + student1.attributes['Graduation Date'] + student1.attributes['GPA'])/3
+        score2 = (student2.attributes['Qualification Points'] + student2.attributes['Graduation Date'] + student2.attributes['GPA'])/3
+
+        return score1 - score2
