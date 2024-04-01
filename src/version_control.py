@@ -20,6 +20,7 @@ def generate_required_packages(dependencies):
 def check_python_version():
     if sys.version_info < tuple(map(int, REQUIRED_PYTHON.split('.'))):
         raise AssertionError(f"Python {REQUIRED_PYTHON} or later is required.")
+    print(f"Python version {REQUIRED_PYTHON} or later is installed.")
 
 def check_package_versions(required_packages):
     for package, required_version in required_packages.items():
@@ -31,6 +32,7 @@ def check_package_versions(required_packages):
 
         if installed_version < required_version:
             raise AssertionError(f"{package} version {required_version} or later is required, but {installed_version} is installed.")
+        print(f"{package} version {required_version} or later is installed.")
 
 
         

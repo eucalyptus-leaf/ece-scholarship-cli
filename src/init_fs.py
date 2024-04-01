@@ -12,9 +12,11 @@ def setup_project_structure(root_dir):
     data_directories = ['scholarships', 'general_application', 'output']
 
     create_directory(os.path.join(root_dir, data_dir))
+    print(f"Created {data_dir} directory")
 
     for dir in data_directories:
         create_directory(os.path.join(root_dir, data_dir, dir))
+        print(f"Created {dir} directory")
 
     print("Project structure created")
 
