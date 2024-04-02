@@ -1,5 +1,5 @@
 '''-------------------------------------------------------------------
-File name: program.py
+File name: project.py
 Description: This file contains the main user intertface and options
              for the scholarship application project
 
@@ -16,10 +16,10 @@ def print_message():
     # Function to print greeting message at the beginning
     #----------------------------------------------------------
     # Prompt the user for input with a clear message
-    print("|*************************************|")
-    print("| Welcome to the Scholarship Program  |")
-    print("| Please enter the name of the folder.|")
-    print("|*************************************|\n")
+    print("|***************************************************************|")
+    print("|            Welcome to the Scholarship Program                 |")
+    print("|Please enter the name of the folder to being using the program.|")
+    print("|***************************************************************|\n")
     #folder_name = input("Folder Name on Desktop: ")
 
 
@@ -28,13 +28,14 @@ def print_main_menu():
     # Function to print out Main Menu Options
     #----------------------------------------------------------
     print("Main Menu:\n")
-    print("1. Print Scholarship List")
-    print("2. Print Student List")
-    print("3. Print Names of Scholarships")
-    print("4. Save in text file")
-    print("5. Sort")
-    print("6. Budget")
-    print("7. Quit\n")
+    print("1. Print Scholarship List            (Prints all Scholarship names with Total Budget and Requirements)")
+    print("2. Print Student List                (Prints all the students qualified for a selected scholarship)")
+    print("3. Print Names of Scholarships       (Prints the names of all scholarships)")     
+    print("4. Sort                              (Sorts all individual and general scholarship files)")
+    print("5. Budget                            (Estimates money for each student)")
+    print("6. Match                             (Awards scholarship to students)")       
+    print("7. Modify                            (User manually awards money to student)")
+    print("8. Quit                              (Quit by inputting number '8', 'Q', or 'q')\n")
 
 
 def read_student_data(folder_path, scholarship_name):
@@ -140,18 +141,57 @@ def process_file(folder_path, input_file_name):
     #----------------------------------------------------------
     # Function to sort students in scholarship files
     #----------------------------------------------------------
-    if input_file_name == "schplarship.xlsx":
+    if input_file_name == "scholarships.xlsx":
         print(f"Skipping file '{input_file_name}' as it will not be processed.")
         return
+    
+    # Start
+    #if input_file_name == 'ECEGeneral.xlsx':
 
+    if input_file_name == 'ECEGeneral.xlsx':
+        file_path = os.path.join(folder_path, 'ECEGeneral.xlsx')
+        #output_file_path = os.path.join(folder_path, 'Sorted', f"sort_{input_file_name}.csv")
+        if input_file_name == 'ECEGeneral.xlsx':
+            file_path = os.path.join(folder_path, 'ECEGeneral.xlsx')
+            output_file_path = os.path.join(folder_path, 'Sorted', f"sort_{input_file_name}")
+            grad_column = 'What is your expected graduation date from college? '
+
+            def change_month(date):
+                if pd.notnull(date):
+                    month_mapping = {6: 5, 4: 5, 7: 8, 9: 8, 10: 12, 11: 12, 1: 5, 2: 5, 3: 5}
+                    return date.replace(month=month_mapping.get(date.month, date.month))
+                return date
+
+            def format_season(date):
+                if pd.notnull(date):
+                    season_map = {5: 'Spring', 8: 'Summer', 12: 'Fall'}
+                    season = season_map.get(date.month, '')
+                    return f' {date.year} {season}' if season else date.strftime('%Y')
+                return date
+
+            df = pd.read_excel(file_path)
+
+            df_filter = df[(df['Cumulative GPA'] >= 3.5)].copy()
+            df_filter[grad_column] = pd.to_datetime(df_filter[grad_column], format='%Y/%m/%d', errors='coerce')
+
+            df_complete = df_filter.sort_values(by=[grad_column, 'Cumulative GPA'], ascending=[True, False])
+            df_complete[grad_column] = df_complete[grad_column].apply(change_month)
+            df_complete[grad_column] = df_complete[grad_column].apply(format_season)
+
+            df_complete.to_excel(output_file_path, index=False, engine='openpyxl')  # Specify 'openpyxl' engine
+            print(f"Final sorted data for '{input_file_name}' saved to: {output_file_path}")
+            return
+    
+
+    '''
     input_file_path = os.path.join(folder_path, input_file_name)
 
     if not os.path.exists(input_file_path):
         raise FileNotFoundError(f"Input file '{input_file_name}' not found. Make sure it is present in the specified scholarship folder.")
 
-    correct_headers = ["Name", "Qualification Points", "Encumbered Funds", "ID", "Expected Grad Date", "Acad Level", "Cumulative GPA", "Major Description", "Total Credits Earned", "Major GPA", "Total Credits Remaining "] 
+    correct_headers = ["Name", "Qualification Points", "Encumbered Funds", "ID", "Expected Grad Date", "Acad Level", "Cumulative GPA", "Major Description", "Total Credits Earned", "Major GPA", "Total Credits Remaining "]
 
-    df = pd.read_excel(input_file_path)
+    df = pd.read_excel(input_file_path, engine='openpyxl')
 
     missing_headers = [header for header in correct_headers if header not in df.columns]
     if missing_headers:
@@ -173,20 +213,51 @@ def process_file(folder_path, input_file_name):
 
     df_filtered_final = df_sort[(df_sort["Cumulative GPA"] >= 3.5) & (df_sort["Acad Level"] != "Freshman") & (df_sort["Major GPA"] != 0)].copy()
     df_filtered_final.loc[:, "Expected Grad Date"] = pd.to_datetime(df_filtered_final["Expected Grad Date"]).dt.to_period('M')
-    df_filtered_final_sorted = df_filtered_final.sort_values(by=["Expected Grad Date", "Cumulative GPA"], ascending=[True, False])
-    
+
+    # Sorting based on Qualification Points, Expected Grad Date, and Cumulative GPA
+    df_filtered_final_sorted = df_filtered_final.sort_values(by=["Qualification Points", "Expected Grad Date", "Cumulative GPA"], ascending=[False, True, False])
+
     # Update the output file path to include "_sort"
     output_file_path = os.path.join(sorted_folder, f"sort_{input_file_name}")
 
     df_filtered_final_sorted.to_excel(output_file_path, index=False, header=True)
 
     print(f"Final sorted data for '{input_file_name}' saved to: {output_file_path}")
+    '''
+
+    input_file_path = os.path.join(folder_path, input_file_name)
+
+    if not os.path.exists(input_file_path):
+        raise FileNotFoundError(f"Input file '{input_file_name}' not found. Make sure it is present in the specified scholarship folder.")
+
+    # Read the Excel file
+    df = pd.read_excel(input_file_path, engine='openpyxl')
+
+    # Convert 'Expected Grad Date' column to datetime
+    df.loc[:, "Expected Grad Date"] = pd.to_datetime(df["Expected Grad Date"]).dt.to_period('M')
+
+    # Create the Sorted folder if it doesn't exist
+    sorted_folder = os.path.join(folder_path, 'Sorted')
+    os.makedirs(sorted_folder, exist_ok=True)
+
+    # Define the output file path
+    output_file_path = os.path.join(sorted_folder, f"sort_{input_file_name}")
+
+    # Sort the DataFrame based on specified criteria
+    df_sorted = df[(df["Cumulative GPA"] >= 3.5) & (df["Acad Level"] != "Freshman") & (df["Major GPA"] != 0)].copy()
+    df_sorted = df_sorted.sort_values(by=["Qualification Points", "Expected Grad Date", "Cumulative GPA"], ascending=[False, True, False])
+
+    # Write the sorted DataFrame to Excel
+    df_sorted.to_excel(output_file_path, index=False, header=True)
+
+    print(f"Final sorted data for '{input_file_name}' saved to: {output_file_path}")
 
 
-def calculate_budget(row):
+def calculate_budget(folder_path):
     #----------------------------------------------------------
     # Function used to calculate budget for each student
     #----------------------------------------------------------
+    '''
     gpa = row['Cumulative GPA']
     grad_date = row['Expected Grad Date']
 
@@ -212,6 +283,34 @@ def calculate_budget(row):
             return 1000  # Default case if none of the conditions are met
 
     return 0  # Default value if conditions are not met
+    '''
+    input_file_name = 'sort_ECEGeneral.xlsx'
+    input_file_path = os.path.join(folder_path, 'Sorted', input_file_name)
+
+    if not os.path.exists(input_file_path):
+        print(f"Error: Input file '{input_file_name}' not found.")
+        return
+
+    output_file_name = 'budget_ECEGeneral.xlsx'
+    output_file_path = os.path.join(folder_path, 'Sorted', output_file_name)
+
+    # Read the input file
+    df = pd.read_excel(input_file_path)
+
+    # Select relevant columns
+    selected_columns = ['ID', 'What is your expected graduation date from college? ', 'Cumulative GPA']
+
+    # Create a new DataFrame with selected columns
+    df_selected = df[selected_columns].copy()
+
+    # Create a new column 'Budget' based on GPA
+    df_selected['Budget'] = df_selected['Cumulative GPA'].apply(lambda x: 4000 if x == 4.0 else None)
+
+    # Save the new DataFrame to the output file
+    df_selected.to_excel(output_file_path, index=False, engine='openpyxl')
+
+    print(f"Budget calculation completed. File saved to: {output_file_path}")
+
 
 def duplicate_and_update_excel(input_path, output_path):
     #----------------------------------------------------------
@@ -227,10 +326,14 @@ def duplicate_and_update_excel(input_path, output_path):
     df.to_excel(output_path, index=False)
 
 
-
 print_message()
+print()
+print('Program imports os, datetime from datetime, re, and pandas as pd')
+print()
+
 
 while True:
+    print('Ensure all required files are downloaded and organized into a designated folder located on the computer desktop. \nFolder should include all downloaded scholarship files and overview of scholarship file\nAccess the folder by specifying its name through input.')
     folder_name = input("Enter Folder Name: ")
 
     if folder_name.strip():
@@ -244,11 +347,13 @@ while True:
     else:
         print("Invalid folder name. Please provide a valid folder name.")
 
+print('Input "H" for Help')
+
 while True:
     print()
     print_main_menu()
 
-    choice = input("Enter option (1/2/3/4/5/6/7): ").strip()
+    choice = input("Enter option (1/2/3/4/5/6/7/8): ").strip()
 
     if choice == '1':
         read_scholarship_data(folder_path, "scholarships")
@@ -257,10 +362,10 @@ while True:
         read_student_data(folder_path, scholarship_name)
     elif choice == '3':
         print_scholarship_names(folder_path)
+    #elif choice == '4':
+    #    scholarship_name = input("Enter the name of the scholarship: ").strip()
+    #    save_student_and_scholarship_data(folder_path, scholarship_name, 'StudentAndScholarship.txt')
     elif choice == '4':
-        scholarship_name = input("Enter the name of the scholarship: ").strip()
-        save_student_and_scholarship_data(folder_path, scholarship_name, 'StudentAndScholarship.txt')
-    elif choice == '5':
         # Get a list of all files in the folder
         all_files = os.listdir(folder_path)
 
@@ -269,14 +374,40 @@ while True:
             if file_name.endswith(".xlsx"):
                 process_file(folder_path, file_name)
         #print("Thank you for using the scholarship program!")
-    elif choice == '6':
-        base_folder = folder_path
-        input_file = os.path.join(base_folder, 'Sorted', 'sort_ECEGeneral.xlsx')  # Modified file name
-        output_file = os.path.join(base_folder, 'Sorted', 'sort_ECEGeneral_updated.xlsx')
+    elif choice == '5':
+        calculate_budget(folder_path)
+        #base_folder = folder_path
+        #input_file = os.path.join(base_folder, 'Sorted', 'sort_ECEGeneral.xlsx')  # Modified file name
+        #output_file = os.path.join(base_folder, 'Sorted', 'sort_ECEGeneral_updated.xlsx')
         # Duplicate and update the Excel file
-        duplicate_and_update_excel(input_file, output_file)
-    elif choice == '7' or choice.lower() == 'q':
+        #duplicate_and_update_excel(input_file, output_file)
+    elif choice == '6':
+        print('Match')
+    elif choice == '7':
+        print("Which scholarship would you like to modify: ")
+        file_name = "scholarship.xlsx" 
+        print("Scholarship 1: XXXX")
+        print("Scholarship 2: XXXX")
+        print("Scholarship 3: XXXX")
+        with open(file_name, 'r') as file:
+            # 
+            pass 
+    elif choice == '8' or choice.lower() == 'q' or choice == 'Q':
         print("Thank you for using the scholarship program!")
         break
+    elif choice == 'H':
+        print()
+        print('Help Instructions:')
+        print('-------------------------------------------------------------------------------------------------------------')
+        print('The program accepts numerical inputs, with each number corresponding to one of the following options.')
+        print('1. Option 1 allows for the printing of all scholarship details, including name, budget, and qualifications.')
+        print('2. Option 2 prints of all students who meet the criteria for a particular scholarship.')
+        print('3. Option 3 displays the names of all available scholarships on the screen.')
+        print('4. Option 5 organizes all student based of qualification points within each file.')
+        print('5. Option 6 computes the budget allocation for each individual student.')
+        print('6. Option 7 pairs students with their respective eligible scholarships.')
+        print('7. Option 8 allows for user to input awarded money for specific scholarship')
+        print('8. Option 9 concludes the program, also triggered by input of "Q" or "q".')
+        
     else:
         print("Invalid choice. Please enter a valid option.")
