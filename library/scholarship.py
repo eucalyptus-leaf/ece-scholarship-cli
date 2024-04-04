@@ -1,3 +1,4 @@
+from library.budget_system import ScholarshipBudget
 """
 This module contains the Scholarship class which represents a scholarship.
 """
@@ -6,7 +7,7 @@ class Scholarship:
     """
     The Scholarship class represents a scholarship.
     """
-    def __init__(self, scholarship_id=0, name="None", budget=0, num_awards=0, priority=0):
+    def __init__(self, headers, budget, scholarship_id=0, name="None", num_awards=0, priority=0):
         """
         Initializes a new instance of the Scholarship class.
 
@@ -16,31 +17,67 @@ class Scholarship:
         :param num_awards: The number of awards offered by the scholarship.
         :param priority: The priority of the scholarship.
         """
+        self._headers = headers
         self.scholarship_id = scholarship_id
         self.name = name
-        self.budget = budget
-        self.working_budget = budget
+        self._budget = ScholarshipBudget(budget)
         self.num_awards = num_awards
         self.priority = priority
         self.criteria = dict()
-        self.students = []
+        self.students = dict()
 
-    def add_criteria(self, criteria):
+    @property
+    def budget(self):
         """
-        Adds a criteria to the scholarship.
+        Gets the total budget of the scholarship.
 
-        :param criteria: The criteria to add.
+        :return: The total budget of the scholarship.
         """
-        self.criteria.update(criteria)
-        
+        return self._budget.budget
+    
+    @budget.setter
+    def budget(self, value):
+        """
+        Sets the total budget of the scholarship.
 
-    def remove_criteria(self, criteria):
+        :param value: The total budget of the scholarship.
         """
-        Removes a criteria from the scholarship.
+        self._budget.budget = value
 
-        :param criteria: The criteria to remove.
+    @property
+    def working_budget(self):
         """
-        self.criteria.pop(criteria)
+        Gets the working budget of the scholarship.
+
+        :return: The working budget of the scholarship.
+        """
+        return self._budget.working_budget
+    
+    @working_budget.setter
+    def working_budget(self, value):
+        """
+        Sets the working budget of the scholarship.
+
+        :param value: The working budget of the scholarship.
+        """
+        self._budget.working_budget = value
+
+
+    def __getitem__(self, header_name):
+        # Use overview headers for normalization and lookup
+        normalized_header = self._headers.get_normalized_overview_header(header_name)
+        return self.criteria.get(normalized_header)
+
+    def __setitem__(self, header_name, value):
+        # Use overview headers for normalization and setting values
+        normalized_header = self._headers.get_normalized_overview_header(header_name)
+        self.criteria[normalized_header] = value
+
+    def remove_criteria(self, header_name):
+        # Use overview headers for normalization and removal
+        normalized_header = self._headers.get_normalized_overview_header(header_name)
+        if normalized_header in self.criteria:
+            del self.criteria[normalized_header]
 
 
     def search_criteria(self, criteria):
@@ -53,13 +90,13 @@ class Scholarship:
         return criteria in self.criteria
     
 
-    def add_student(self, student_id):
+    def add_student(self, student_id, student):
         """
         Adds a student to the scholarship's ordered linked-list of students.
 
         :param student_id: The unique identifier of the student to add.
         """
-        self.students.add(student_id)
+        self.students.update({student_id: student})
 
 
     def remove_student(self, student_id):
@@ -68,7 +105,16 @@ class Scholarship:
 
         :param student_id: The unique identifier of the student applying.
         """
-        self.students.remove(student_id)
+        self.students.pop(student_id, None)
+
+    def search_student(self, student_id):
+        """
+        Searches for a student in the scholarship's linked-list of students.
+
+        :param student_id: The unique identifier of the student to search for.
+        :return: True if the student is found, False otherwise.
+        """
+        return student_id in self.students
 
 
     def compare_students(self, student1, student2):

@@ -1,6 +1,11 @@
+import sys
+sys.path.append('/Users/gavinjones/Library/CloudStorage/OneDrive-Personal/school/college/ncsu/2023-24/ncsu_spring_2024/classes/ece-485/gh/32-ECE-Scholarship-Project')
 import os
 import pandas as pd
 import re
+import library.student as Student
+import library.scholarship as Scholarship
+from library.hashtab import Hashtab
 from datetime import datetime
 
 def calculate_budget(expected_grad_date, cumulative_gpa):
@@ -45,12 +50,13 @@ def calculate_budget(expected_grad_date, cumulative_gpa):
     return budget
 
 
-def get_student_id(scholarshipTab, h):
+def get_student_id(studentTab, scholarshipTab, filepath):
     awarded_ids = {}
     
     # Path to the folder containing scholarships.xlsx
-    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-    scholarship_folder_path = os.path.join(desktop_path, "scholarship")
+    #desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    #scholarship_folder_path = os.path.join(desktop_path, "scholarship")
+    scholarship_folder_path = filepath
     scholarships_file_path = os.path.join(scholarship_folder_path, "scholarships.xlsx")
 
     output_file_path = os.path.join(scholarship_folder_path, "Matched.txt")
@@ -80,9 +86,9 @@ def get_student_id(scholarshipTab, h):
 
             # Search for the scholarship in the hash table
             scholarship = None
-            for scholarship_id in scholarshipTab:
-                if first_word.lower() in scholarshipTab.get(scholarship_id).name.lower():
-                    scholarship = scholarshipTab.get(scholarship_id)
+            for scholarship in scholarshipTab:
+                if first_word.lower() in scholarshipTab.get(scholarship.scholarship_id).name.lower():
+                    scholarship = scholarshipTab.get(scholarship.scholarship_id)
                     break
 
             if scholarship is None:
@@ -99,14 +105,25 @@ def get_student_id(scholarshipTab, h):
             remaining_budget = total_budget
 
             # Iterate over each student in the scholarship
-            for student_id, _ in scholarship.students:
-                student = studentTab.get(student_id)
+            for student in scholarship.students:
                 if student is None:
                     continue
-                
+
+                student_id = student[0]
+                print(student_id)
+                application_id = student[1]
+
+                print(f"   Student ID: {student_id} (Application ID: {application_id})")
+
+                studentObj = studentTab.get(student_id)
+                print(studentObj)
+                if studentObj is None:
+                    print(f"Student ID {student_id} not found in the student table.")
+                    continue
+
                 # Find the Expected Grad Date and Cumulative GPA
-                expected_grad_date = student.attributes.get('Expected Grad Date')
-                cumulative_gpa = student.attributes.get('Cumulative GPA')
+                expected_grad_date = studentObj.attributes.get('Expected Grad Date')
+                cumulative_gpa = studentObj.attributes.get('Cumulative GPA')
 
                 if expected_grad_date is None or cumulative_gpa is None:
                     continue
@@ -114,8 +131,8 @@ def get_student_id(scholarshipTab, h):
                 spending_budget = calculate_budget(expected_grad_date, cumulative_gpa)
 
                 # Check if student has received any money before
-                if student_id in awarded_ids:
-                    awarded_amount, remaining_amount = awarded_ids[student_id]
+                if application_id in awarded_ids:
+                    awarded_amount, remaining_amount = awarded_ids[application_id]
                     eligible_amount = spending_budget - awarded_amount
                     if eligible_amount <= 0:
                         continue
@@ -125,25 +142,22 @@ def get_student_id(scholarshipTab, h):
                 # Check if remaining budget is sufficient for this student
                 if spending_budget <= remaining_budget:
                     # Print student details
-                    print(f"   ID: {student_id} (Awarded: ${spending_budget})")
+                    print(f"   ID: {application_id} (Awarded: ${spending_budget})")
 
                     # Update awarded and remaining amounts
-                    awarded_amount = awarded_ids.get(student_id, [0, 0])[0] + spending_budget
+                    awarded_amount = awarded_ids.get(application_id, [0, 0])[0] + spending_budget
                     remaining_amount = calculate_budget(expected_grad_date, cumulative_gpa) - awarded_amount
-                    awarded_ids[student_id] = [awarded_amount, remaining_amount]
+                    awarded_ids[application_id] = [awarded_amount, remaining_amount]
 
                     remaining_budget -= spending_budget
                 else:
-                    print(f"   ID: {student_id} (Awarded: ${remaining_budget})")
+                    print(f"   ID: {application_id} (Awarded: ${remaining_budget})")
 
-                    awarded_amount = awarded_ids.get(student_id, [0, 0])[0] + remaining_budget
+                    awarded_amount = awarded_ids.get(application_id, [0, 0])[0] + remaining_budget
                     remaining_amount = calculate_budget(expected_grad_date, cumulative_gpa) - awarded_amount
-                    awarded_ids[student_id] = [awarded_amount, remaining_amount]
+                    awarded_ids[application_id] = [awarded_amount, remaining_amount]
 
                     remaining_budget = 0
                     break
 
             print()
-
-# Assuming scholarshipTab and h are available from your previous code
-get_student_id(scholarshipTab, h)

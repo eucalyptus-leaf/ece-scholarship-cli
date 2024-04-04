@@ -1,10 +1,9 @@
-import re
+
 import os
-import glob
+import re
 import pandas as pd
 from library.student import Student
 from library.scholarship import Scholarship
-
 
 class Headers:
     def __init__(self):
@@ -14,35 +13,48 @@ class Headers:
         self.headers = []
         self.normalized_headers = []
         self.overview_headers = []
+        self.normalized_overview_headers = []
+        self.header_map = {}
+        self.overview_header_map = {}
 
     # Function to normalize headers
     def _normalize_header(self, header):
         return re.sub(r'\s+', '', header).lower()
 
     # Function to read and normalize headers from user file
-    def normalize_and_save_headers(self, input_file, output_file):
+    def normalize_and_save_headers(self, input_file, output_file, overview_file = False):
         with open(input_file, 'r') as file:
-            self.headers = [line.strip() for line in file if line.strip()]
+            headers = [line.strip() for line in file if line.strip()]
+        
+        normalized_headers = [self._normalize_header(header) for header in headers]
 
-        self.normalized_headers = [self._normalize_header(header) for header in self.headers]
-
-        file.close()
+        if overview_file:
+            self.overview_headers = headers
+            self.normalized_overview_headers = normalized_headers
+            self.overview_header_map = {i : header for i, header in enumerate(headers)}
+        else:
+            self.headers = headers
+            self.normalized_headers = normalized_headers
+            self.header_map = {i : header for i, header in enumerate(headers)}
 
         with open(output_file, 'w') as outfile:
-            for header in self.normalized_headers:
-                outfile.write(header + '\n')
+            if overview_file:
+                for header in self.overview_headers:
+                    outfile.write(header + '\n')
+            else:
+                for header in self.normalized_headers:
+                    outfile.write(header + '\n')
 
-        outfile.close()
+    def get_header(self, index):
+        return self.header_map.get(index)
     
-    def save_overview_headers(self, input_file):
-        with open(input_file, 'r') as file:
-            self.overview_headers = [line.strip() for line in file if line.strip()]
-        file.close()
-    
+    def get_overview_header(self, index):
+        return self.overview_header_map.get(index)
+
     def print_headers(self):
         print(self.headers, '\n')
 
-def import_students_from_file(folder_path, studentTab, h):
+def import_students_from_file(h, budget, folder_path, studentTab):
     try:
         files = [f for f in os.listdir(folder_path) if f.endswith(('.csv', '.xlsx', '.xls')) and os.path.isfile(os.path.join(folder_path, f))]
         if len(files) == 0:
@@ -77,21 +89,20 @@ def import_students_from_file(folder_path, studentTab, h):
     #print(df.head()) # DEBUG: Print the first 5 rows of the dataframe
     # Iterate through the rows
     for index, row in df.iterrows():
-        student = Student()
+        student = Student(h, budget)
 
-        student.first_name = row[h.headers[54]]
-        student.middle_name = row[h.headers[55]]
-        student.last_name = row[h.headers[53]]
-        student.student_id = row[h.headers[52]]
-        student.application_id = row[h.headers[1]]
-        student.email = row[h.headers[6]]
+        student.first_name = row[h.get_header(54)] # Line 55 in headers.txt
+        student.middle_name = row[h.get_header(55)] # Line 56 in headers.txt
+        student.last_name = row[h.get_header(53)] # Line 54 in headers.txt
+        student.student_id = row[h.get_header(52)] # Line 53 in headers.txt
+        student.application_id = row[h.get_header(1)] # Line 2 in headers.txt
+        student.email = row[h.get_header(6)] # Line 7 in headers.txt
         for header in df.columns:
             student.attributes[header] = row[header]
 
         studentTab.insert(student.student_id, student)
 
     return True
-
 
 def _extract_scholarship_id(view_column_data):
     # Using regex to extract the ID from the href link
@@ -101,8 +112,7 @@ def _extract_scholarship_id(view_column_data):
     else:
         return None  # Or some default value or raise an exception
     
-
-def import_scholarships_from_file(folder_path, scholarshipTab, studentTab, h):
+def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studentTab):
     try:
         files = [f for f in os.listdir(folder_path) if f.endswith(('.csv', '.xlsx', '.xls')) and os.path.isfile(os.path.join(folder_path, f))]
         if len(files) == 0:
@@ -111,6 +121,7 @@ def import_scholarships_from_file(folder_path, scholarshipTab, studentTab, h):
         else:
             print("Files found in the specified directory: ", len(files))
             # Process each file
+            new_student_counter = 0 # TO-DO: remove before deployment
             for file in files:
                 print("Processing file: ", file)
                 file_path = os.path.join(folder_path, file)
@@ -126,20 +137,47 @@ def import_scholarships_from_file(folder_path, scholarshipTab, studentTab, h):
                 
                 # Process each row in the DataFrame
                 for index, row in df.iterrows():
-                    if index == 0:
-                        scholarship = Scholarship()
+                    student_id = row[h.get_header(52)] # Line 2 in headers.txt
+                    student = studentTab.get(student_id)
+                    if student is None:
+                        print(f"Error: Student with application ID {student_id} not found")
+                        print(f"Creating a new student for application ID {student_id}")
+                        student = Student(h, budget)
+                        student.first_name = row[h.get_header(54)] # Line 55 in headers.txt
+                        student.middle_name = row[h.get_header(55)] # Line 56 in headers.txt
+                        student.last_name = row[h.get_header(53)] # Line 54 in headers.txt
+                        student.student_id = row[h.get_header(52)] # Line 53 in headers.txt
+                        student.application_id = row[h.get_header(1)] # Line 2 in headers.txt
+                        student.email = row[h.get_header(6)] # Line 7 in headers.txt
 
-                    id = _extract_scholarship_id(row[h.headers[0]])
+                        new_student_counter += 1 # TO-DO: remove before deployment
+                        generate_new_student_id_for_new_student(student, new_student_counter) # TO-DO: remove before deployment
+                        
+                        for header in df.columns:
+                            student.attributes[header] = row[header]
+
+                        student.attributes['General Application Score'] = 0
+                        studentTab.insert(student.student_id, student)
+                    
+                    #write_to_df(student,index, df) # TO-DO: remove before deployment
+
+                    if index == 0:
+                        scholarship = Scholarship(h, budget)
+
+                    id = _extract_scholarship_id(row[h.get_header(0)]) # Line 1 in headers.txt
                     if id is None:
                         print("Error: Could not extract scholarship ID")
                         continue  # Skip if ID can't be extracted
                     
                     # Create Scholarship object and populate with data
                     scholarship.scholarship_id = id
+                    
                     # Add other scholarship attributes as necessary
-                    scholarship.students.append((row[h.headers[1]], row[h.headers[4]]))
+                    scholarship.students.update({student_id:studentTab[student_id]}) # (student_id:application_id)
                     # Add each scholarship to the scholarshipTab
                     scholarshipTab.insert(scholarship.scholarship_id, scholarship)
+                
+                #df.to_excel(file_path, index=False, engine='openpyxl') # TO-DO: remove before deployment
         return True
     
     except Exception as e:
@@ -179,10 +217,27 @@ def import_overview_scholarships_from_file(folder_path, scholarshipTab, h):
         return False
     
     for index, row in df.iterrows():
-        id = row[h.overview_headers[1]]
-        scholarshipTab.get(id).priority = row[h.overview_headers[0]]
-        scholarshipTab.get(id).name = row[h.overview_headers[2]]
-        scholarshipTab.get(id).budget = row[h.overview_headers[3]]
-        scholarshipTab.get(id).criteria = row[h.overview_headers[4]].split('; ')
+        id = row[h.get_overview_header(1)]
+        scholarshipTab[id].priority = row[h.get_overview_header(0)]
+        scholarshipTab[id].name = row[h.get_overview_header(2)]
+        scholarshipTab[id].budget = row[h.get_overview_header(3)]
+        scholarshipTab[id].working_budget = scholarshipTab[id].budget
+        scholarshipTab[id].criteria = row[h.get_overview_header(4)].split('; ')
 
     return True
+
+def generate_new_student_id_for_new_student(student, new_student_counter): # TO-DO: remove before deployment
+    new_student_number = 1000 + new_student_counter # TO-DO: remove before deployment
+    student.first_name = 'John' + str(new_student_number) # TO-DO: remove before deployment
+    student.middle_name = 'Todd' + str(new_student_number) # TO-DO: remove before deployment
+    student.last_name = 'Doe' + str(new_student_number) # TO-DO: remove before deployment
+    student.student_id = new_student_number # TO-DO: remove before deployment
+    student.email = 'jdoe' + str(new_student_number) + '@ncsu.edu' # TO-DO: remove before deployment
+
+def write_to_df(student,index, df): # TO-DO: remove before deployment
+    df.loc[index, 'Student ID'] = student.student_id # TO-DO: remove before deployment
+    df.loc[index, 'Name'] = f"{student.last_name}, {student.first_name}" # TO-DO: remove before deployment
+    df.loc[index, 'Primary Email'] = student.email # TO-DO: remove before deployment
+    df.loc[index, 'First Name'] = student.first_name # TO-DO: remove before deployment
+    df.loc[index, 'Last Name'] = student.last_name # TO-DO: remove before deployment
+    df.loc[index, 'Middle Name'] = student.middle_name # TO-DO: remove before deployment
