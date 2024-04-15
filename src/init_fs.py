@@ -1,22 +1,31 @@
 # init_fs.py is a script that sets up the project structure for a new project
 import os
+import platform
+import subprocess
 
-def create_directory(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-    else:
-        print(f"Directory {path} already exists")
+def create_hidden_directory(directory):
+    os_name = platform.system()
+    if os_name == 'Windows':
+        # On Windows, make the directory and set it as hidden
+        os.makedirs(directory, exist_ok=True)
+        subprocess.run(['attrib', '+H', directory], check=True)
+    elif os_name in ['Linux', 'Darwin']:
+        # On Unix-like systems, just prepend a dot to make it hidden
+        if not directory.startswith('.'):
+            directory = '.' + directory
+        os.makedirs(directory, exist_ok=True)
+    return directory
 
 def setup_project_structure(root_dir):
     data_dir = 'data'
     data_directories = ['scholarships', 'general_application', 'output']
 
-    create_directory(os.path.join(root_dir, data_dir))
-    print(f"Created {data_dir} directory")
+    os.makedirs(os.path.join(root_dir, data_dir), exist_ok=True)
 
     for dir in data_directories:
-        create_directory(os.path.join(root_dir, data_dir, dir))
-        print(f"Created {dir} directory")
+        os.makedirs(os.path.join(root_dir, data_dir, dir), exist_ok=True)
+
+    create_hidden_directory(os.path.join(root_dir, 'localAppData'))
 
     print("Project structure created")
 

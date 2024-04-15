@@ -7,101 +7,63 @@
 # ... do this recusively for all students
 
 class Hashtab:
-    # A hash table data structure made up of a list of dictorionaries. Include a hash function to hash the keys.
-    def __init__(self, size=100):
-        self.table = dict()
-        #self.table = [dict() for _ in range(100)]
-        self.size = size
-        self.count = 0
-        self.load_factor = 0.70
+    def __init__(self):
+        self.table = {}
 
-    # def hash(self, key):
-    #     # A hash function that takes a key and returns the hash value.
-    #     return key % self.size
-    
-    # def resize(self, new_size):
-    #     # Resizes the hash table to a new size.
-    #     new_table = [dict() for _ in range(new_size)]
-    #     for i in range(self.size):
-    #         for key in self.table[i]:
-    #             index = self.hash(key)
-    #             new_table[index][key] = self.table[i][key]
-    #     self.table = new_table
-    #     self.size = new_size
-    #     return True
-    
     def insert(self, key, value):
-        # # Inserts a key-value pair into the hash table and resizes if the load factor is exceeded.
-        # index = self.hash(key)
-        # if key in self.table[index]:
-        #     return False
-        # self.table[index][key] = value
-        # self.count += 1
-        # if self.count / self.size > self.load_factor:
-        #     self.resize(self.size * 2)
-        # return True
         self.table[key] = value
-        self.count += 1
-        self.size += 1
         return True
-    
-    
+
+    def add(self, key, value):
+        """Adds or updates a key-value pair in the hash table."""
+        self.table[key] = value
+
+    def get(self, key):
+        """Retrieves the value for a given key from the hash table, or a default value None if the key is not found.
+            Args: key: The key to look up in the hash table.
+            Returns: The value for the key if the key is found, otherwise None.
+        """
+        return self.table.get(key)
+
     def remove(self, key):
-        # # Removes a key-value pair from the hash table and rezises if structure has become too sparse.
-        # index = self.hash(key)
-        # if key not in self.table[index]:
-        #     return False
-        # self.table[index].pop(key)
-        # self.count -= 1
-        # if self.count / self.size < 0.10:
-        #     self.resize(self.size // 2)
-        # return True
-        self.table.pop(key, None)
-    
-    
-    def search(self, key):
-        # # Searches for a key in the hash table.
-        # index = self.hash(key)
-        # return key in self.table[index]
+        """Removes a key from the hash table if it exists and returns its value, or None if the key is not found."""
+        return self.table.pop(key, None)
+
+    def contains(self, key):
+        """Checks if the hash table contains a specific key."""
         return key in self.table
     
-    def get(self, key):
-        # # Returns the value associated with a key in the hash table if it exists. Otherwise, returns None.
-        # index = self.hash(key)
-        # if key in self.table[index]:
-        #     return self.table[index][key]
-        # return None
-        return self.table.get(key, None)
-    
-    def __sizeof__(self):
-        # Returns the size of the hash table.
-        return self.size
-    
-    def __str__(self):
-        # Returns a string representation of the hash table.
-        return str(self.table)
-    
-    def __len__(self):
-        # Returns the number of key-value pairs in the hash table.
-        return len(self.table)
-    
-    def __contains__(self, key):
-        # Returns True if a key is in the hash table, False otherwise.
-        return self.search(key)
-    
+    def search(self, key):
+        # Searches for a key in the table.
+        return key in self.table
+
     def __getitem__(self, key):
-        # Returns the value associated with a key in the hash table.
+        """Allows for bracket notation access, safely returning None if key not found."""
         return self.get(key)
-    
+
     def __setitem__(self, key, value):
-        # Inserts a key-value pair into the hash table.
-        self.insert(key, value)
+        """Allows for bracket notation setting (e.g., hashtable[key] = value)."""
+        self.add(key, value)
+
+    def __delitem__(self, key):
+        """Allows for bracket notation deletion (e.g., del hashtable[key])."""
+        if key in self.table:
+            del self.table[key]
+        else:
+            raise KeyError(f"Key {key} not found")
+
+    def __len__(self):
+        """Returns the number of items in the hash table."""
+        return len(self.table)
 
     def __iter__(self):
-        # Iterate over each bucket (which is a dictionary) in the hash table
-        # for bucket in self.table:
-        #     # Iterate over each key-value pair in the bucket
-        #     for key, value in bucket.items():
-        #         yield value
-        for key, value in self.table.items():
-            yield value
+        """Returns an iterator over the keys in the hash table."""
+        return iter(self.table.values())
+
+    def __contains__(self, key):
+        """Implements membership testing using 'in'."""
+        return key in self.table
+
+    def __str__(self):
+        """Returns a string representation of the hash table."""
+        return str(self.table)

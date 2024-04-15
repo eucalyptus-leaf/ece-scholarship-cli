@@ -79,7 +79,9 @@ class Scholarship:
         if normalized_header in self.criteria:
             del self.criteria[normalized_header]
 
-
+    def __str__(self):
+        return f"({self.scholarship_id}) {self.name} | Budget: ${self.budget}, Awards: {self.num_awards}"
+        
     def search_criteria(self, criteria):
         """
         Searches for a criteria in the scholarship's criteria.
@@ -115,7 +117,6 @@ class Scholarship:
         :return: True if the student is found, False otherwise.
         """
         return student_id in self.students
-
 
     def compare_students(self, student1, student2):
         # This method should return a positive number if student1 is more qualified than student2,

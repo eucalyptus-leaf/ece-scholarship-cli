@@ -15,9 +15,9 @@ class BudgetSystem:
         # Return True if exceeded, False otherwise
         return self.total_department_budget < self.currentBudget
     
-    def calculate_total_department_budget(self, scholarshipHashTab):
+    def calculate_total_department_budget(self, scholarshipTab):
         self.total_department_budget = 0
-        for scholarship in scholarshipHashTab:
+        for scholarship in scholarshipTab:
             self.total_department_budget += scholarship.budget
         if self.total_department_budget == 0:
             print ("Scholarship budgets empty. Department's current total budget: ", self.total_department_budget)
@@ -99,7 +99,7 @@ class BudgetSystem:
             student.budget = scholarship_amount
             student.working_budget = scholarship_amount
             self.currentBudget += scholarship_amount
-            print("Student ", student.student_id, " has a budget of ", student.budget)
+            #print("Student ", student.student_id, " has a budget of ", student.budget)
 
         # Check if the department's budget is exceeded
         if self.total_department_budget_exceeded():
@@ -112,6 +112,7 @@ class BudgetSystem:
         budget_exceeded=self.calculate_every_students_budget(h, studentHashTab)
         print("Budget for each student calculated. Budget exceeded: ", budget_exceeded)
         if budget_exceeded:
+            print("Budget exceeded. Adjusting awards for students.")
             self.adjust_awards_for_budget(h, studentHashTab, if_reduction_amount, if_reduction_percentage)
         return True
     

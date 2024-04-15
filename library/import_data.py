@@ -100,7 +100,8 @@ def import_students_from_file(h, budget, folder_path, studentTab):
         for header in df.columns:
             student.attributes[header] = row[header]
 
-        studentTab.insert(student.student_id, student)
+        # studentTab.insert(student.application_id, student) # TO-DO: remove before deployment...used for copying fake student data to excel
+        studentTab.insert(student.student_id, student) 
 
     return True
 
@@ -121,7 +122,7 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
         else:
             print("Files found in the specified directory: ", len(files))
             # Process each file
-            new_student_counter = 0 # TO-DO: remove before deployment
+            new_student_counter = 0 # TO-DO: remove before deployment...used for copying fake student data to excel
             for file in files:
                 print("Processing file: ", file)
                 file_path = os.path.join(folder_path, file)
@@ -137,11 +138,12 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                 
                 # Process each row in the DataFrame
                 for index, row in df.iterrows():
+                    # student_id = row[h.get_header(1)] # TO-DO: remove before deployment...used for copying fake student data to excel
                     student_id = row[h.get_header(52)] # Line 2 in headers.txt
                     student = studentTab.get(student_id)
                     if student is None:
-                        print(f"Error: Student with application ID {student_id} not found")
-                        print(f"Creating a new student for application ID {student_id}")
+                        # print(f"Error: Student with application ID {student_id} not found")
+                        # print(f"Creating a new student for application ID {student_id}")
                         student = Student(h, budget)
                         student.first_name = row[h.get_header(54)] # Line 55 in headers.txt
                         student.middle_name = row[h.get_header(55)] # Line 56 in headers.txt
@@ -150,8 +152,8 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                         student.application_id = row[h.get_header(1)] # Line 2 in headers.txt
                         student.email = row[h.get_header(6)] # Line 7 in headers.txt
 
-                        new_student_counter += 1 # TO-DO: remove before deployment
-                        generate_new_student_id_for_new_student(student, new_student_counter) # TO-DO: remove before deployment
+                        new_student_counter += 1 # TO-DO: remove before deployment...used for copying fake student data to excel
+                        generate_new_student_id_for_new_student(student, new_student_counter) # TO-DO: remove before deployment...used for copying fake student data to excel
                         
                         for header in df.columns:
                             student.attributes[header] = row[header]
@@ -159,7 +161,7 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                         student.attributes['General Application Score'] = 0
                         studentTab.insert(student.student_id, student)
                     
-                    #write_to_df(student,index, df) # TO-DO: remove before deployment
+                    # write_to_df(student,index, df) # TO-DO: remove before deployment...used for copying fake student data to excel
 
                     if index == 0:
                         scholarship = Scholarship(h, budget)
@@ -171,20 +173,22 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                     
                     # Create Scholarship object and populate with data
                     scholarship.scholarship_id = id
+                    # scholarship.application_id = id # TO-DO: remove before deployment...used for copying fake student data to excel
                     
                     # Add other scholarship attributes as necessary
-                    scholarship.students.update({student_id:studentTab[student_id]}) # (student_id:application_id)
+                    scholarship.students.update({student_id:studentTab[student_id]}) # (student_id:Student object)
+                    # scholarship.students.update({student.application_id:student}) # TO-DO: remove before implementation...used for copying fake student data to excel
                     # Add each scholarship to the scholarshipTab
                     scholarshipTab.insert(scholarship.scholarship_id, scholarship)
                 
-                #df.to_excel(file_path, index=False, engine='openpyxl') # TO-DO: remove before deployment
+                # df.to_excel(file_path, index=False, engine='openpyxl') # TO-DO: remove before deployment...used for copying fake student data to excel
         return True
     
     except Exception as e:
         print(f"Error: {e}")
         return False
     
-def import_overview_scholarships_from_file(folder_path, scholarshipTab, h):
+def import_overview_scholarships_from_file(h, folder_path, scholarshipTab):
     try:
         files = [f for f in os.listdir(folder_path) if f.endswith(('.csv', '.xlsx', '.xls')) and os.path.isfile(os.path.join(folder_path, f))]
         if len(files) == 0:
@@ -226,18 +230,18 @@ def import_overview_scholarships_from_file(folder_path, scholarshipTab, h):
 
     return True
 
-def generate_new_student_id_for_new_student(student, new_student_counter): # TO-DO: remove before deployment
-    new_student_number = 1000 + new_student_counter # TO-DO: remove before deployment
-    student.first_name = 'John' + str(new_student_number) # TO-DO: remove before deployment
-    student.middle_name = 'Todd' + str(new_student_number) # TO-DO: remove before deployment
-    student.last_name = 'Doe' + str(new_student_number) # TO-DO: remove before deployment
-    student.student_id = new_student_number # TO-DO: remove before deployment
-    student.email = 'jdoe' + str(new_student_number) + '@ncsu.edu' # TO-DO: remove before deployment
+def generate_new_student_id_for_new_student(student, new_student_counter): # TO-DO: remove before deployment...used for copying fake student data to excel
+    new_student_number = 1000 + new_student_counter # TO-DO: remove before deployment...used for copying fake student data to excel
+    student.first_name = 'John' + str(new_student_number) # TO-DO: remove before deployment...used for copying fake student data to excel
+    student.middle_name = 'Todd' + str(new_student_number) # TO-DO: remove before deployment...used for copying fake student data to excel
+    student.last_name = 'Doe' + str(new_student_number) # TO-DO: remove before deployment...used for copying fake student data to excel
+    student.student_id = new_student_number # TO-DO: remove before deployment...used for copying fake student data to excel
+    student.email = 'jdoe' + str(new_student_number) + '@ncsu.edu' # TO-DO: remove before deployment...used for copying fake student data to excel
 
-def write_to_df(student,index, df): # TO-DO: remove before deployment
-    df.loc[index, 'Student ID'] = student.student_id # TO-DO: remove before deployment
-    df.loc[index, 'Name'] = f"{student.last_name}, {student.first_name}" # TO-DO: remove before deployment
-    df.loc[index, 'Primary Email'] = student.email # TO-DO: remove before deployment
-    df.loc[index, 'First Name'] = student.first_name # TO-DO: remove before deployment
-    df.loc[index, 'Last Name'] = student.last_name # TO-DO: remove before deployment
-    df.loc[index, 'Middle Name'] = student.middle_name # TO-DO: remove before deployment
+def write_to_df(student,index, df): # TO-DO: remove before deployment...used for copying fake student data to excel
+    df.loc[index, 'Student ID'] = student.student_id # TO-DO: remove before deployment...used for copying fake student data to excel
+    df.loc[index, 'Name'] = f"{student.last_name}, {student.first_name}" # TO-DO: remove before deployment...used for copying fake student data to excel
+    df.loc[index, 'Primary Email'] = student.email # TO-DO: remove before deployment...used for copying fake student data to excel
+    df.loc[index, 'First Name'] = student.first_name # TO-DO: remove before deployment...used for copying fake student data to excel
+    df.loc[index, 'Last Name'] = student.last_name # TO-DO: remove before deployment...used for copying fake student data to excel
+    df.loc[index, 'Middle Name'] = student.middle_name # TO-DO: remove before deployment...used for copying fake student data to excel
