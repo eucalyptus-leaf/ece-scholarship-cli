@@ -4,6 +4,7 @@ from datetime import datetime
 
 
 class BudgetSystem:
+    '''Description: Manages and calculation total budgets based on different criteria'''
     total_department_budget = 0 # Total budget for the department
     currentBudget = 0   # monnies left in the total budget
 
@@ -11,11 +12,19 @@ class BudgetSystem:
         return
 
     def total_department_budget_exceeded(self):
-        # Implement your logic to check if the department's total budget is exceeded
-        # Return True if exceeded, False otherwise
+        ''' Description: Check if department total budget is exceeded
+            Return: Returns true is bedgets is exceeded or false otherwise
+            Args: None
+            Error State: None
+        '''
         return self.total_department_budget < self.currentBudget
     
     def calculate_total_department_budget(self, scholarshipTab):
+        ''' Description: Calculates the total budget od department
+            Args: scholarshipTab
+            Return: Returns total budget number
+            Error State: Prints scholarship budget empty
+        '''
         self.total_department_budget = 0
         for scholarship in scholarshipTab:
             self.total_department_budget += scholarship.budget
@@ -25,9 +34,11 @@ class BudgetSystem:
         return True
     
     def reduce_student_scholarship_budget_by_gpa(self, h, studentTab, gpa, reduction_amount, percentage = False):
-        # Reduce the award amount for all students with the lower than specified GPA
-        
-        # Define the lower bound of the GPA range
+        ''' Description: Reduce the award amount for all students with the lower than specified GPA
+            Args: h, studentTab, gpa, reduction_amount, percentage
+            Return: min_hit: The amount to reduce 
+            Error State: None
+        '''
         if gpa > 3.6:
             lower_bound = round(gpa - 0.1,1)
         else:
@@ -50,7 +61,11 @@ class BudgetSystem:
         return min_hit
     
     def recalculate_current_budget(self, studentTab):
-        # Recalculate the current award budget after adjustments
+        ''' Description: Recalcuates the current award budget after adjustments
+            Args: studentTab
+            Return: None
+            Error State: None
+        '''
         self.currentBudget = 0
         print("Reseting Working Budget to recalculate. Recalculating the working budget.")
         for student in studentTab:
@@ -59,7 +74,11 @@ class BudgetSystem:
         return
     
     def adjust_awards_for_budget(self, h, studentTab, percentage = None, amount = None):
-        # Implement the logic to adjust the awards for students when the budget is exceeded starting with students with 3.5 GPA moving up when student at GPA is reduced to 500
+        ''' Description: Implements logic to adjust the award for students when the budget is exceeded starting with students with 3.5 GPA moving up when student at GPA is reduced to 500
+            Args: h, studentTab, percentage, amount
+            Return: None
+            Error State: None 
+        '''
         gpa = round(3.6, 1)
         while self.total_department_budget_exceeded():
             print("Budget ", self.total_department_budget, " exceeded. Currently, ", self.currentBudget, " Adjusting awards for students with GPA lower than ", gpa)
@@ -78,7 +97,12 @@ class BudgetSystem:
                 break
         return
     
-    def calculate_every_students_budget(self, h, studentTab): # should only be run once at initialization of the budget system
+    def calculate_every_students_budget(self, h, studentTab): 
+        ''' Description: Calculates budget for students based on GPA and graduation date
+            Args: studentTab
+            Return: True is not exceeded, False otherwise
+            Error State: None
+        '''
         for student in studentTab:
             gpa = round(float(student.attributes[h.headers[64]]),1) # Cumulative GPA rounded to the nearest tenth
             grad_date = student.attributes[h.headers[83]]
@@ -99,6 +123,11 @@ class BudgetSystem:
         else: return True
     
     def init_budget_system(self, h, studentHashTab, scholarshipHashTab, if_reduction_amount = None, if_reduction_percentage = None):
+        ''' Description: Initializes the budget system, calculates total budget, and adjusts if exceeded
+            Args: h, studentHashTab, scholarshipHashTab, if_reduction_amount
+            Return: True if sucessfully initialized
+            Error State: None
+        '''
         self.calculate_total_department_budget(scholarshipHashTab)
         print("Total department budget: ", self.total_department_budget)
         budget_exceeded=self.calculate_every_students_budget(h, studentHashTab)
@@ -110,13 +139,24 @@ class BudgetSystem:
     
 
 class StudentBudget:
+    '''Class to initialize and calculate budget for each student based on their qualifications'''
     def __init__(self, budgetSystem):
+        ''' Description: Initializes a student budget 
+            Args: budgetSystem
+            Return: None
+            Error State: None 
+        '''
         self.access = budgetSystem
         self.budget = 0
         self.working_budget = 0
 
 
-    def calculate_budget(self, expected_grad_date, cumulative_gpa): # loevan code
+    def calculate_budget(self, expected_grad_date, cumulative_gpa): 
+        ''' Description: Calculates the budget for a student based on GPA and graduation date
+            Args: expected_grad_date, cumulative_gpa
+            Return: budget: Calculated budget for student
+            Error State: None
+        '''
         current_year = datetime.now().year
         current_month = datetime.now().month
         grad_year = expected_grad_date.year
@@ -157,7 +197,13 @@ class StudentBudget:
         return budget
 
 class ScholarshipBudget:
+    '''Class to intialize the initial budget for scholarships'''
     def __init__(self, budgetSystem):
+        ''' Description: Initialize the scholarship budget
+            Args: budgetSystem
+            Return: None
+            Error State: None 
+        '''        
         self.access = budgetSystem
         self.budget = 0
         self.working_budget = 0
