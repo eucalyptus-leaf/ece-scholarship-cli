@@ -91,6 +91,9 @@ class CLI_system:
             import_overview_scholarships_from_file(self.headers, os.path.join(self.dataPath, "scholarships", "overview"), self.scholarshipTab)
             print("Imported Overview Scholarships\n")
 
+            # Order scholarships
+            self.awards.order_scholarships(self.scholarshipTab)
+
             # Initialize the budget system
             self.budget.init_budget_system(self.headers, self.studentTab, self.scholarshipTab)
             print("Initialized Budget System\n")

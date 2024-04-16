@@ -136,6 +136,8 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                     print("Error: File type not supported")
                     continue  # Skip unsupported file types
                 
+                scholarship = None
+
                 # Process each row in the DataFrame
                 for index, row in df.iterrows():
                     # student_id = row[h.get_header(1)] # TO-DO: remove before deployment...used for copying fake student data to excel
@@ -166,6 +168,10 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                     if index == 0:
                         scholarship = Scholarship(h, budget)
 
+                    if scholarship is None:
+                        print("Error: Scholarship object not initialized correctly at creation when reading files.")
+                        continue
+
                     id = _extract_scholarship_id(row[h.get_header(0)]) # Line 1 in headers.txt
                     if id is None:
                         print("Error: Could not extract scholarship ID")
@@ -173,15 +179,23 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                     
                     # Create Scholarship object and populate with data
                     scholarship.scholarship_id = id
+                    student.priority.append(id)
                     # scholarship.application_id = id # TO-DO: remove before deployment...used for copying fake student data to excel
                     
                     # Add other scholarship attributes as necessary
-                    scholarship.students.update({student_id:studentTab[student_id]}) # (student_id:Student object)
+                    scholarship.add_student(student_id, studentTab[student_id]) # (student_id:Student object)
                     # scholarship.students.update({student.application_id:student}) # TO-DO: remove before implementation...used for copying fake student data to excel
+
                     # Add each scholarship to the scholarshipTab
                     scholarshipTab.insert(scholarship.scholarship_id, scholarship)
+
+                # Sort the students in the scholarship
+                scholarship.sort_students()
                 
                 # df.to_excel(file_path, index=False, engine='openpyxl') # TO-DO: remove before deployment...used for copying fake student data to excel
+            for scholarship in scholarshipTab:
+                scholarship.find_priority_students()
+
         return True
     
     except Exception as e:

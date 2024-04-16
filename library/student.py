@@ -22,7 +22,7 @@ class Student:
         self.application_id = aid
         self.email = e
         self._budget = StudentBudget(budget)
-        self.priority = 0
+        self.priority = []
         self.awarded = dict()
         self.attributes = dict()
 
@@ -68,19 +68,26 @@ class Student:
         """
         return self._budget
     
-    def remove_attribute(self, header_name):
-        normalized_header = self._headers.get_normalized_header(header_name)
-        if normalized_header in self.attributes:
-            del self.attributes[normalized_header]
+    def __getitem__(self, key):
+        """
+        Gets the value of an attribute.
+        """
+        header = self._headers.get_header(key)
+        return self.attributes[header]
+    
+    def __setitem__(self, key, value):
+        """
+        Sets the value of an attribute.
+        """
+        header = self._headers.get_header(key)
+        self.attributes[header] = value
 
-     # Use property for convenient access
-    def __getitem__(self, header_name):
-        normalized_header = self._headers.get_normalized_header(header_name)
-        return self.attributes.get(normalized_header)
-
-    def __setitem__(self, header_name, value):
-        normalized_header = self._headers.get_normalized_header(header_name)
-        self.attributes[normalized_header] = value
+    def __delitem__(self, key):
+        """
+        Deletes an attribute.
+        """
+        header = self._headers.get_header(key)
+        del self.attributes[header]
 
     def search_attributes(self, key):
         """

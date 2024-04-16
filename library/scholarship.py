@@ -24,6 +24,7 @@ class Scholarship:
         self.num_awards = num_awards
         self.priority = priority
         self.criteria = dict()
+        self.studentOrder = []
         self.students = dict()
 
     @property
@@ -62,23 +63,6 @@ class Scholarship:
         """
         self._budget.working_budget = value
 
-
-    def __getitem__(self, header_name):
-        # Use overview headers for normalization and lookup
-        normalized_header = self._headers.get_normalized_overview_header(header_name)
-        return self.criteria.get(normalized_header)
-
-    def __setitem__(self, header_name, value):
-        # Use overview headers for normalization and setting values
-        normalized_header = self._headers.get_normalized_overview_header(header_name)
-        self.criteria[normalized_header] = value
-
-    def remove_criteria(self, header_name):
-        # Use overview headers for normalization and removal
-        normalized_header = self._headers.get_normalized_overview_header(header_name)
-        if normalized_header in self.criteria:
-            del self.criteria[normalized_header]
-
     def __str__(self):
         return f"({self.scholarship_id}) {self.name} | Budget: ${self.budget}, Awards: {self.num_awards}"
         
@@ -99,6 +83,8 @@ class Scholarship:
         :param student_id: The unique identifier of the student to add.
         """
         self.students.update({student_id: student})
+        if student_id not in self.studentOrder:
+            self.studentOrder.append(student_id)
 
 
     def remove_student(self, student_id):
@@ -117,18 +103,23 @@ class Scholarship:
         :return: True if the student is found, False otherwise.
         """
         return student_id in self.students
+    
+    def sort_students(self):
+        """ Sorts the studentOrder list based on student scores, graduation dates, and GPAs. """
+        try:
+            self.studentOrder.sort(key=lambda student_id: (
+                -self.students[student_id][4],  # Higher points are better
+                self.students[student_id][83].toordinal(),  # Earlier dates are better
+                -self.students[student_id][64],  # Higher GPA is better
+            ))
+        except Exception as e:
+            print(f"Error during sorting: {e}")
 
-    def compare_students(self, student1, student2):
-        # This method should return a positive number if student1 is more qualified than student2,
-        # a negative number if student2 is more qualified than student1, and 0 if they are equally qualified.
-        # The criteria for comparison will depend on the specific criteria for the scholarship.
-        """ TODO: Implement a method for determing how the criterion match and how they compare """
-        
-        # sort by quality
-        # sort by graduation date
-        # sort by GPA
+    def find_priority_students(self):
+        """ using the len() of students[student_id].priority to get the number of scholarships a student is qualified for, students with less scholarships in their priority member variable are prioritized. Thus the studentOrder list is re-ordered with priority student closer to the front of the list."""
+        try:
+            self.studentOrder.sort(key=lambda student_id: len(self.students[student_id].priority))
+        except Exception as e:
+            print(f"Error during sorting: {e}")
 
-        score1 = (student1.attributes['Qualification Points'] + student1.attributes['Graduation Date'] + student1.attributes['GPA'])/3
-        score2 = (student2.attributes['Qualification Points'] + student2.attributes['Graduation Date'] + student2.attributes['GPA'])/3
-
-        return score1 - score2
+            
