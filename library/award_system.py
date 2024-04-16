@@ -7,7 +7,7 @@ class AwardSystem:
 
     def order_scholarships(self, scholarshipTab):
         # Order scholarships by priority
-        self.award_order = sorted(scholarshipTab, key=lambda x: x.priority, reverse=True)
+        self.award_order = sorted(scholarshipTab, key=lambda x: -x.priority, reverse=True)
 
     def award_scholarships_loevan(self, h, studentTab, scholarshipTab, budgetSystem):
         # Award scholarships to students based on Loevan's algorithm

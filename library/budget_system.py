@@ -79,22 +79,14 @@ class BudgetSystem:
         return
     
     def calculate_every_students_budget(self, h, studentTab): # should only be run once at initialization of the budget system
-        current_year = datetime.now().year
-
         for student in studentTab:
             gpa = round(float(student.attributes[h.headers[64]]),1) # Cumulative GPA rounded to the nearest tenth
             grad_date = student.attributes[h.headers[83]]
-            year = grad_date.year
-            month = grad_date.month
 
-            # # Check if the GPA is eligible for a scholarship
+            # Check if the GPA is eligible for a scholarship
             # if gpa >= 3.5:
             # Calculate the scholarship amount based on GPA
-            scholarship_amount = int(student.budgetObj.calculate_scholarship_amount(gpa))
-
-            # Halve the amount if the student graduates in December of the current year
-            if year == current_year and month > 5:
-                scholarship_amount /= 2
+            scholarship_amount = int(student.budgetObj.calculate_budget(grad_date, gpa))
 
             student.budget = scholarship_amount
             student.working_budget = scholarship_amount
@@ -124,11 +116,9 @@ class StudentBudget:
         self.working_budget = 0
 
 
-    def calculate_budget_loevan(expected_grad_date, cumulative_gpa): # loevan code
-        current_year = 2023
-        current_month = 3
-        #current_year = datetime.now().year
-        #current_month = datetime.now().month
+    def calculate_budget(self, expected_grad_date, cumulative_gpa): # loevan code
+        current_year = datetime.now().year
+        current_month = datetime.now().month
         grad_year = expected_grad_date.year
         grad_month = expected_grad_date.month
         
@@ -165,26 +155,6 @@ class StudentBudget:
             budget = 1000
         
         return budget
-    
-    def calculate_scholarship_amount(self, gpa):
-        max_amount = 4000  # Maximum amount for a 4.0 GPA
-        min_gpa_for_award = round(3.5,1)
-        min_amount = 1000  # Minimum amount for the lowest eligible GPA
-
-        if gpa < min_gpa_for_award:
-            # If GPA is below the threshold for awarding, return 0 or a predefined minimum amount
-            return 0
-
-        # Standard reduction for each tenth of a GPA below 4.0
-        reduction_per_tenth = (max_amount - min_amount) / ((round(4.0,1) - min_gpa_for_award) * 10)
-        reduction = (round(4.0,1) - (math.floor(gpa*10)/10)) * 10 * reduction_per_tenth
-        scholarship_amount = round((max_amount - reduction), 0)
-
-        # Ensure the scholarship amount does not fall below the minimum amount
-        if scholarship_amount < min_amount:
-            scholarship_amount = min_amount
-
-        return scholarship_amount
 
 class ScholarshipBudget:
     def __init__(self, budgetSystem):

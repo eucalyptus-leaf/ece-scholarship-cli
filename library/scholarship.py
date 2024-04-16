@@ -105,20 +105,14 @@ class Scholarship:
         return student_id in self.students
     
     def sort_students(self):
-        """ Sorts the studentOrder list based on student scores, graduation dates, and GPAs. """
+        """ Sorts the studentOrder list based on student scores, graduation dates, GPAs, and how many scholarships they qualify for. """
         try:
             self.studentOrder.sort(key=lambda student_id: (
-                -self.students[student_id][4],  # Higher points are better
+                -self.students[student_id][4],  # Higher quality points are better
                 self.students[student_id][83].toordinal(),  # Earlier dates are better
                 -self.students[student_id][64],  # Higher GPA is better
+                len(self.students[student_id].priority) # Fewer scholarships in priority is better
             ))
-        except Exception as e:
-            print(f"Error during sorting: {e}")
-
-    def find_priority_students(self):
-        """ using the len() of students[student_id].priority to get the number of scholarships a student is qualified for, students with less scholarships in their priority member variable are prioritized. Thus the studentOrder list is re-ordered with priority student closer to the front of the list."""
-        try:
-            self.studentOrder.sort(key=lambda student_id: len(self.students[student_id].priority))
         except Exception as e:
             print(f"Error during sorting: {e}")
 

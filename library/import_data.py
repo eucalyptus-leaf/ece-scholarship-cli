@@ -189,12 +189,14 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                     # Add each scholarship to the scholarshipTab
                     scholarshipTab.insert(scholarship.scholarship_id, scholarship)
 
-                # Sort the students in the scholarship
-                scholarship.sort_students()
+                # # Sort the students in the scholarship 
+                # scholarship.sort_students() # TO-DO: remove before deployment...testing sort priority
                 
                 # df.to_excel(file_path, index=False, engine='openpyxl') # TO-DO: remove before deployment...used for copying fake student data to excel
             for scholarship in scholarshipTab:
-                scholarship.find_priority_students()
+                # Sort the students in the scholarship
+                scholarship.sort_students()
+                # scholarship.find_priority_students() # TO-DO: remove before deployment...testing sort priority
 
         return True
     

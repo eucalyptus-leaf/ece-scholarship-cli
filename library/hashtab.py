@@ -22,6 +22,7 @@ class Hashtab:
         """Retrieves the value for a given key from the hash table, or a default value None if the key is not found.
             Args: key: The key to look up in the hash table.
             Returns: The value for the key if the key is found, otherwise None.
+            Error State: if key is None, raise ValueError
         """
         return self.table.get(key)
 
