@@ -2,46 +2,73 @@
 
 class AwardSystem:
     def __init__(self):
-        self.awarded = {}
         self.award_order = []
+
+    def to_dict(self):
+        return {
+            "award_order": self.award_order
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        obj = cls()
+        obj.award_order = data['award_order']
+        return obj
 
     def order_scholarships(self, scholarshipTab):
         # Order scholarships by priority
         self.award_order = sorted(scholarshipTab, key=lambda x: -x.priority, reverse=True)
 
-    def award_scholarships_loevan(self, h, studentTab, scholarshipTab, budgetSystem):
-        # Award scholarships to students based on Loevan's algorithm
-        for scholarship in self.award_order:
-            if scholarship.scholarship_id not in self.awarded:
-                self.awarded[scholarship.scholarship_id] = {}
-            for id in scholarship.studentOrder:
-                student = studentTab[id]
-                if scholarship.working_budget == 0:
-                    print("Scholarship " + str(scholarship.scholarship_id) + " has been fully awarded.")
-                    break
-                elif scholarship.working_budget <= 0:
-                    print("Error in scholarship " + str(scholarship.scholarship_id) + " budget. Budget is negative.")
-                    break
-                else:
-                    if student.working_budget > 0:
-                        if scholarship.working_budget >= student.working_budget:
-                            scholarship.working_budget -= student.working_budget
-                            student.awarded[scholarship.scholarship_id] = student.working_budget
-                            self.awarded[scholarship.scholarship_id][student.student_id] = student.working_budget
-                            student.working_budget = 0
-                        else:
-                            student.awarded[scholarship.scholarship_id] = scholarship.working_budget
-                            student.working_budget -= scholarship.working_budget
-                            self.awarded[scholarship.scholarship_id][student.student_id] = scholarship.working_budget
-                            scholarship.working_budget = 0
-                        print("Awarded " + str(student.awarded[scholarship.scholarship_id]) + " from scholarship " + str(scholarship.scholarship_id) + " to student " + str(student.student_id))
+    def award_scholarship_with_budget(self, scholarship, studentTab):
+        for student_id in scholarship.studentOrder:
+            student = studentTab[student_id]
+            if scholarship.working_budget <= 0:
+                break
+            elif student.working_budget <= 0:
+                continue
+            self.allocate_award(scholarship, student)
+        
+    def award_scholarship_with_limit(self, scholarship, studentTab):
+        awards_given = 0
+        initial_awards = {} # Track how much each student initiaially receives
+        
+        #First pass: Allocate awards to students in order of priority from studentOrder until the number of awards given is equal to the number of awards allowed
+        for student_id in scholarship.studentOrder:
+            if awards_given >= scholarship.num_awards or scholarship.working_budget <= 0:
+                break
+            student = studentTab[student_id]
+            if student.working_budget > 0:
+                awarded_amount = self.allocate_award(scholarship, student)
+                if awarded_amount > 0:
+                    awards_given += 1
+                    initial_awards[student_id] = awarded_amount
+        
+        #Second pass: If scholarship working budget remains, distribute remaining budget evenly to students who received awards in the first pass
+        if awards_given == scholarship.num_awards and scholarship.working_budget > 0:
+            even_share = scholarship.working_budget / awards_given
+            for student_id in initial_awards:
+                student = studentTab[student_id]
+                self.allocate_additional_award(scholarship, student, round(even_share))
+        
     
-    def get_awards_string(self, scholarship_id):
-        # Print the students awarded a scholarship
-        string = ""
-        if scholarship_id in self.awarded:
-            for student_id, amount in self.awarded[scholarship_id].items():
-                string += "\tStudent (" + str(student_id) + ") awarded $" + str(amount) + "\n"
-        else:
-            string += "No students awarded scholarship."
-        return string
+    def allocate_award(self, scholarship, student):
+        award_amount = min(scholarship.working_budget, student.working_budget)
+        scholarship.working_budget -= award_amount
+        student.working_budget -= award_amount
+        scholarship.awards[student.student_id] = award_amount
+        student.awarded[scholarship.scholarship_id] = award_amount
+        return award_amount
+
+    def allocate_additional_award(self, scholarship, student, even_share):
+        scholarship.working_budget -= even_share
+        student.working_budget -= even_share
+        scholarship.awards[student.student_id] += even_share
+        student.awarded[scholarship.scholarship_id] += even_share
+        
+
+    def award_scholarships(self, scholarshipTab, studentTab):
+        for scholarship in scholarshipTab:
+            if scholarship.num_awards == -1:
+                self.award_scholarship_with_budget(scholarship, studentTab)
+            else:
+                self.award_scholarship_with_limit(scholarship, studentTab)

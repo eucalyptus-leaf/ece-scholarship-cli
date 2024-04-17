@@ -1,4 +1,5 @@
 from library.budget_system import ScholarshipBudget
+from library.student import Student
 """
 This module contains the Scholarship class which represents a scholarship.
 """
@@ -24,9 +25,43 @@ class Scholarship:
         self.num_awards = num_awards
         self.priority = priority
         self.criteria = dict()
+        self.awards = dict()
         self.studentOrder = []
         self.students = dict()
 
+
+    def to_dict(self):
+        # Convert the scholarship to a dictionary
+        scholarship_dict = {
+            "Headers" : self._headers.to_dict(),
+            "Scholarship ID": self.scholarship_id,
+            "Name": self.name,
+            "Budget": self._budget.to_dict(),
+            "Number of Awards Allowed": self.num_awards,
+            "Priority": self.priority,
+            "Criteria": self.criteria,
+            "Awards": self.awards,
+            "Student Order": self.studentOrder,
+            "Students": self.students
+        }
+        return scholarship_dict
+    
+    @classmethod
+    def from_dict(cls, data, headers):
+        scholarship = cls(
+            headers,
+            ScholarshipBudget.from_dict(data['budget']),
+            data['scholarship_id'],
+            data['name'],
+            data['num_awards'],
+            data['priority']
+        )
+        scholarship.criteria = data['criteria']
+        scholarship.awards = data['awards']
+        scholarship.studentOrder = data['studentOrder']
+        scholarship.students = {k: Student.from_dict(v, headers) for k, v in data['students'].items()}
+        return scholarship
+    
     @property
     def budget(self):
         """
@@ -64,7 +99,7 @@ class Scholarship:
         self._budget.working_budget = value
 
     def __str__(self):
-        return f"({self.scholarship_id}) {self.name} | Budget: ${self.budget}, Awards: {self.num_awards}"
+        return f"(ID#{self.scholarship_id}) {self.name} | Budget: ${self.budget}, Number of Awards Allowed: {self.num_awards}, Priority: {self.priority}"
         
     def search_criteria(self, criteria):
         """
@@ -116,4 +151,51 @@ class Scholarship:
         except Exception as e:
             print(f"Error during sorting: {e}")
 
+    def all_info_str(self):
+        # Print all the information of the scholarship
+        string = "Scholarship ID: " + str(self.scholarship_id) + "\n"
+        string += "Name: " + self.name + "\n"
+        string += "Budget: $" + str(self.budget) + "\n"
+        string += "Number of Awards Allowed: " + str(self.num_awards) + "\n"
+        string += "Priority: " + str(self.priority) + "\n"
+        string += "Criteria:\n"
+        for key, value in self.criteria.items():
+            string += "\t" + key + ": " + str(value) + "\n"
+        string += "Student Order:\n"
+        for student_id in self.studentOrder:
+            string += "\t" + str(self.students[student_id]) + "\n"
+        string += "Qualified Students:\n"
+        string += self.students_str()
+        string += "Student Awards:\n"
+        string += self.awards_str()
+        return string
+
+    def scholarship_student_info_str(self):
+        # Print the scholarship's information
+        string = str(self) + "\n"
+        string += "Student Awarded:\n"
+        string += self.awards_str()
+        string += "Qualified Students:\n"
+        string += self.students_str()
+        return string
+    
+    def students_str(self):
+        # Print the students qualified for this scholarship
+        string = ""
+        if self.students:
+            for student_id, student in self.students.items():
+                string += "\t" + str(student) + "\n"
+        else:
+            string += "\tNo students qualified for this scholarship."
+        return string
+
+    def awards_str(self):
+        # Print the students awarded this scholarship
+        string = ""
+        if self.awards:
+            for student_id, amount in self.awards.items():
+                string += "\tStudent (" + str(student_id) + ") awarded $" + str(amount) + "\n"
+        else:
+            string += "\tNo students awarded by this scholarship."
+        return string
             

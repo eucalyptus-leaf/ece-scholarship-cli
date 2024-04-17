@@ -13,17 +13,16 @@ def main():
 	print_welcome()
 
 	vc() # System Version Control
-	ifs() # Initialize File System Directories
+	hidden_path = ifs() # Initialize File System Directories
 	project_path = os.path.dirname(__file__)
 	print("Project Directory Path: " + project_path + "\n")
 
-	_hidden_path = os.path.join(os.path.dirname(__file__), "localAppData")
 	data_path = os.path.join(os.path.dirname(__file__), "data")
 	config_path = os.path.join(os.path.dirname(__file__), "config")
 	lib_path = os.path.join(os.path.dirname(__file__), "library")
 	src_path = os.path.join(os.path.dirname(__file__), "src")
 
-	system = CLI_system(_hidden_path, data_path, config_path, lib_path, src_path)
+	system = CLI_system(hidden_path, data_path, config_path, lib_path, src_path)
 	system.run_cli()
 
 	# TO-DO: Implement Error System Catches for the CLI System

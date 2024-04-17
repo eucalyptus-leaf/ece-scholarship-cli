@@ -4,11 +4,32 @@ from datetime import datetime
 
 
 class BudgetSystem:
+    _instance = None
     total_department_budget = 0 # Total budget for the department
     currentBudget = 0   # monnies left in the total budget
 
     def __init__(self):
         return
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(BudgetSystem, cls).__new__(cls)
+            cls._instance.total_department_budget = 0
+            cls._instance.currentBudget = 0
+        return cls._instance
+    
+    def to_dict(self):
+        return {
+            "total_department_budget": self.total_department_budget,
+            "currentBudget": self.currentBudget
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        instance = cls()
+        instance.total_department_budget = data['total_department_budget']
+        instance.currentBudget = data['currentBudget']
+        return instance
 
     def total_department_budget_exceeded(self):
         # Implement your logic to check if the department's total budget is exceeded
@@ -115,6 +136,19 @@ class StudentBudget:
         self.budget = 0
         self.working_budget = 0
 
+    def to_dict(self):
+        return {
+            "budget": self.budget,
+            "working_budget": self.working_budget
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        obj = cls(BudgetSystem())
+        obj.budget = data['budget']
+        obj.working_budget = data['working_budget']
+        return obj
+
 
     def calculate_budget(self, expected_grad_date, cumulative_gpa): # loevan code
         current_year = datetime.now().year
@@ -161,3 +195,16 @@ class ScholarshipBudget:
         self.access = budgetSystem
         self.budget = 0
         self.working_budget = 0
+
+    def to_dict(self):
+        return {
+            "budget": self.budget,
+            "working_budget": self.working_budget
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        obj = cls(BudgetSystem())
+        obj.budget = data['budget']
+        obj.working_budget = data['working_budget']
+        return obj

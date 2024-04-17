@@ -17,6 +17,33 @@ class Headers:
         self.header_map = {}
         self.overview_header_map = {}
 
+    def to_dict(self):
+        return {
+            "header_fp": self.header_fp,
+            "normalized_fp": self.normalized_fp,
+            "overview_header_fp": self.overview_header_fp,
+            "headers": self.headers,
+            "normalized_headers": self.normalized_headers,
+            "overview_headers": self.overview_headers,
+            "normalized_overview_headers": self.normalized_overview_headers,
+            "header_map": self.header_map,
+            "overview_header_map": self.overview_header_map
+        }
+    
+    @classmethod
+    def from_dict(cls, data):
+        obj = cls()
+        obj.header_fp = data['header_fp']
+        obj.normalized_fp = data['normalized_fp']
+        obj.overview_header_fp = data['overview_header_fp']
+        obj.headers = data['headers']
+        obj.normalized_headers = data['normalized_headers']
+        obj.overview_headers = data['overview_headers']
+        obj.normalized_overview_headers = data['normalized_overview_headers']
+        obj.header_map = data['header_map']
+        obj.overview_header_map = data['overview_header_map']
+        return obj
+
     # Function to normalize headers
     def _normalize_header(self, header):
         return re.sub(r'\s+', '', header).lower()
@@ -242,7 +269,8 @@ def import_overview_scholarships_from_file(h, folder_path, scholarshipTab):
         scholarshipTab[id].name = row[h.get_overview_header(2)]
         scholarshipTab[id].budget = row[h.get_overview_header(3)]
         scholarshipTab[id].working_budget = scholarshipTab[id].budget
-        scholarshipTab[id].criteria = row[h.get_overview_header(4)].split('; ')
+        #scholarshipTab[id].criteria = row[h.get_overview_header(4)].split('; ') was used for old overview file
+        scholarshipTab[id].num_awards = row[h.get_overview_header(4)]
 
     return True
 

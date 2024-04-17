@@ -1,5 +1,5 @@
-Awarded Sequence
+Award Sequence
 Scholarship ID
-Project Name
-Spending Budget
-Requirements
+Scholarship Name
+Scholarship Budget
+Maximum Number of Awards Allowed
