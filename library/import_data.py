@@ -7,6 +7,12 @@ from library.scholarship import Scholarship
 
 class Headers:
     def __init__(self):
+        """ 
+        Description: Initialize new header objects with defafault values.
+        Args: None
+        Returns: None
+        Error State: None
+        """
         self.header_fp = "None"
         self.normalized_fp = "None"
         self.overview_header_fp = "None"
@@ -17,12 +23,24 @@ class Headers:
         self.header_map = {}
         self.overview_header_map = {}
 
-    # Function to normalize headers
     def _normalize_header(self, header):
+        """ 
+        Description: Removes White space in header names and converts to lowercase.
+        Args: header: the header 
+        Returns: The changed header
+        Error State: None
+        """
         return re.sub(r'\s+', '', header).lower()
 
-    # Function to read and normalize headers from user file
     def normalize_and_save_headers(self, input_file, output_file, overview_file = False):
+        """ 
+        Description: Function to read and normalize headers from user file.
+        Args: input_file: path to input file
+              output_file: path to output file
+              overview_file: indicates if header is found
+        Returns: None
+        Error State: None
+        """
         with open(input_file, 'r') as file:
             headers = [line.strip() for line in file if line.strip()]
         
@@ -46,15 +64,42 @@ class Headers:
                     outfile.write(header + '\n')
 
     def get_header(self, index):
+        """ 
+        Description: Retrives header to an index.
+        Args: index: the index of a header
+        Returns: The header string
+        Error State: None
+        """
         return self.header_map.get(index)
     
     def get_overview_header(self, index):
+        """ 
+        Description: Retrives the overview header string.
+        Args: index: The index of the header
+        Returns: Overview header string.
+        Error State: None
+        """
         return self.overview_header_map.get(index)
 
     def print_headers(self):
+        """ 
+        Description: Prints the headers contained in the Headers object.
+        Args: None
+        Returns: None
+        Error State: None
+        """
         print(self.headers, '\n')
 
 def import_students_from_file(h, budget, folder_path, studentTab):
+    """ 
+    Description: Imports student data from files locared in folder path.
+    Args: h: Headers object
+          budget: Budget object
+          folder_path: the path to folder
+          studentTab: Hash table to store student objects
+    Returns: True if student are imported, False otherwise.
+    Error State: Prints error message if files are not found.
+    """
     try:
         files = [f for f in os.listdir(folder_path) if f.endswith(('.csv', '.xlsx', '.xls')) and os.path.isfile(os.path.join(folder_path, f))]
         if len(files) == 0:
@@ -106,6 +151,12 @@ def import_students_from_file(h, budget, folder_path, studentTab):
     return True
 
 def _extract_scholarship_id(view_column_data):
+    """ 
+    Description: Extracts the scholarship ID from view column data
+    Args: view_column_data: The view column data containing scholarship ID
+    Returns: Extracted scholarship ID
+    Error State: Returns none if ID is not found
+    """
     # Using regex to extract the ID from the href link
     match = re.search(r'opportunities/(\d+)/applications', view_column_data)
     if match:
@@ -114,6 +165,16 @@ def _extract_scholarship_id(view_column_data):
         return None  # Or some default value or raise an exception
     
 def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studentTab):
+    """ 
+    Description: Imports scholarship data from files in folder path.
+    Args: h: Headers object
+          budget: Budget object
+          folder_path: the path to folder
+          studentTab: Hash table to store student objects
+          studenttab: hash table containing student objects
+    Returns: True if scholarship are sucessfully imported, False otherwise
+    Error State: Prints error message if files are not found or cannot be read
+    """
     try:
         files = [f for f in os.listdir(folder_path) if f.endswith(('.csv', '.xlsx', '.xls')) and os.path.isfile(os.path.join(folder_path, f))]
         if len(files) == 0:
@@ -205,6 +266,14 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
         return False
     
 def import_overview_scholarships_from_file(h, folder_path, scholarshipTab):
+    """ 
+    Description: Imports overview scholarship data from files located in folder.
+    Args: h: Headers object
+          folder_path: the path to folder
+          scholarshipTab: Hash table to store scholarship objects
+    Returns: True if overview scholarships are successfully imported, otherwise False
+    Error State: Prints error message if files are not found or cannot be read
+    """
     try:
         files = [f for f in os.listdir(folder_path) if f.endswith(('.csv', '.xlsx', '.xls')) and os.path.isfile(os.path.join(folder_path, f))]
         if len(files) == 0:
@@ -247,6 +316,13 @@ def import_overview_scholarships_from_file(h, folder_path, scholarshipTab):
     return True
 
 def generate_new_student_id_for_new_student(student, new_student_counter): # TO-DO: remove before deployment...used for copying fake student data to excel
+    """ 
+    Description: generates a new student ID for a new student.
+    Args: student: The student object 
+          new_student_counter: Counter for generating new student
+    Returns: None
+    Error State: None
+    """
     new_student_number = 1000 + new_student_counter # TO-DO: remove before deployment...used for copying fake student data to excel
     student.first_name = 'John' + str(new_student_number) # TO-DO: remove before deployment...used for copying fake student data to excel
     student.middle_name = 'Todd' + str(new_student_number) # TO-DO: remove before deployment...used for copying fake student data to excel
@@ -255,6 +331,14 @@ def generate_new_student_id_for_new_student(student, new_student_counter): # TO-
     student.email = 'jdoe' + str(new_student_number) + '@ncsu.edu' # TO-DO: remove before deployment...used for copying fake student data to excel
 
 def write_to_df(student,index, df): # TO-DO: remove before deployment...used for copying fake student data to excel
+    """ 
+    Description: Writes student data to a DataFrame for exporting.
+    Args: student: The student object 
+          index: Index in DataFrame where data is written
+          df: The DataFrame to which student data is written
+    Returns: None
+    Error State: None
+    """
     df.loc[index, 'Student ID'] = student.student_id # TO-DO: remove before deployment...used for copying fake student data to excel
     df.loc[index, 'Name'] = f"{student.last_name}, {student.first_name}" # TO-DO: remove before deployment...used for copying fake student data to excel
     df.loc[index, 'Primary Email'] = student.email # TO-DO: remove before deployment...used for copying fake student data to excel
