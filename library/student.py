@@ -100,8 +100,8 @@ class Student:
         """
         Description: Gets the value of an attribute.
         Args: key: index of attribute
-        Returns: 
-        Error State: 
+        Returns: Value of attribute
+        Error State: None
         """
         header = self._headers.get_header(key)
         return self.attributes[header]
