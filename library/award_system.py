@@ -2,7 +2,9 @@
 
 class AwardSystem:
     def __init__(self):
+        ''' Description: Initialize empty array housing scholarship ID's in order of priority from scholarship_overview_template.xlsx'''
         self.award_order = []
+
 
     def to_dict(self):
         return {
@@ -16,7 +18,9 @@ class AwardSystem:
         return obj
 
     def order_scholarships(self, scholarshipTab):
-        # Order scholarships by priority
+        ''' Description: Order scholarships by priority
+            Args: scholarshipTab
+        '''
         self.award_order = sorted(scholarshipTab, key=lambda x: -x.priority, reverse=True)
 
     def award_scholarship_with_budget(self, scholarship, studentTab):

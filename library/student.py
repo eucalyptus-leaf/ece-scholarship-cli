@@ -12,7 +12,17 @@ class Student:
     """
     def __init__(self, headers, budget, fn="Empty", ln="Empty", mn="Empty", sid=0, aid=0, e="Empty"):
         """
-        Initializes a new instance of the Student class.
+        Description: Initializes a new instance of the Student class.
+        Args: headers: Headers to parse data
+              budget: Student Budget
+              fn: First name
+              ln: Last name
+              mn: Middle name
+              sid: Student ID
+              aid: Application ID
+              e: Student email address
+        Returns: None
+        Error State: None
         """
         self._headers = headers
         self.first_name = fn
@@ -60,70 +70,100 @@ class Student:
     @property
     def ids(self):
         """
-        Gets the student and application IDs.
+        Description: Gets the student and application IDs.
+        Args: None
+        Returns: Tuple containing student ID and application ID
+        Error State: None 
         """
         return (self.student_id, self.application_id)
     
     @property
     def budget(self):
         """
-        Gets the student's budget.
+        Description: Gets the student's budget.
+        Args: None
+        Returns: 
+        Error State: 
         """
         return self._budget.budget
     
     @budget.setter
     def budget(self, value):
         """
-        Sets the student's budget.
+        Description: Sets the student's budget.
+        Args: value: budget to set
+        Returns: None
+        Error State: None
         """
         self._budget.budget = value
 
     @property
     def working_budget(self):
         """
-        Gets the student's working budget.
+        Description: Gets the student's working budget.
+        Args: None
+        Returns: Student's budget
+        Error State: None
         """
         return self._budget.working_budget
     
     @working_budget.setter
     def working_budget(self, value):
         """
-        Sets the student's working budget.
+        Description: Sets the student's working budget.
+        Args: value: budget to set
+        Returns: None
+        Error State: None 
         """
         self._budget.working_budget = value
 
     @property
     def budgetObj(self):
         """
-        Gets the student's budget system.
+        Description: Gets the student's budget system.
+        Args: None
+        Returns: Student budget system
+        Error State: None
         """
         return self._budget
     
     def __getitem__(self, key):
         """
-        Gets the value of an attribute.
+        Description: Gets the value of an attribute.
+        Args: key: index of attribute
+        Returns: Value of attribute
+        Error State: None
         """
         header = self._headers.get_header(key)
         return self.attributes[header]
     
     def __setitem__(self, key, value):
         """
-        Sets the value of an attribute.
+        Description: Sets the value of an attribute.
+        Args: key: index of attribute
+              value: budget to set
+        Returns: None
+        Error State: None
         """
         header = self._headers.get_header(key)
         self.attributes[header] = value
 
     def __delitem__(self, key):
         """
-        Deletes an attribute.
+        Description: Deletes an attribute.
+        Args: key: index of attribute
+        Returns: None
+        Error State: None
         """
         header = self._headers.get_header(key)
         del self.attributes[header]
 
     def search_attributes(self, key):
         """
-        Searches if a key is in the student's attributes.
-        return: True if the key is found, False otherwise.
+        Description: Searches if a key is in the student's attributes.
+        Args: key: index of attribute
+        Returns: True if the key is found, False otherwise.
+        Error State: None
         """
         return key in self.attributes
     
@@ -179,4 +219,10 @@ class Student:
         string += self.qualify_str()
     
     def __str__(self):
+        """
+        Description: Prints student object
+        Args: None
+        Returns: String containing student name, ID, and budget
+        Error State: None
+        """
         return f'(ID#{self.student_id}) {self.first_name} {self.last_name} | Application ID: {self.application_id} Budget: ${self.budget}'
