@@ -21,7 +21,7 @@ class AwardSystem:
         ''' Description: Order scholarships by priority
             Args: scholarshipTab
         '''
-        self.award_order = sorted(scholarshipTab, key=lambda x: -x.priority, reverse=True)
+        self.award_order = sorted(scholarshipTab.keys(), key=lambda x: -scholarshipTab[x].priority, reverse=True)
 
     def award_scholarship_with_budget(self, scholarship, studentTab):
         for student_id in scholarship.studentOrder:
@@ -71,7 +71,8 @@ class AwardSystem:
         
 
     def award_scholarships(self, scholarshipTab, studentTab):
-        for scholarship in scholarshipTab:
+        for id in self.award_order:
+            scholarship = scholarshipTab[id]
             if scholarship.num_awards == -1:
                 self.award_scholarship_with_budget(scholarship, studentTab)
             else:

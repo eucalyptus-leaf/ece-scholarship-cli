@@ -1,5 +1,4 @@
 # budget_system.py
-import math
 from datetime import datetime
 
 

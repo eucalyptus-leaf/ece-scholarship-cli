@@ -1,5 +1,6 @@
-from library.budget_system import ScholarshipBudget
-from library.student import Student
+from src.budget_system import ScholarshipBudget
+from src.student import Student
+import pandas as pd
 """
 This module contains the Scholarship class which represents a scholarship.
 """
@@ -43,25 +44,27 @@ class Scholarship:
             "Criteria": self.criteria,
             "Awards": self.awards,
             "Student Order": self.studentOrder,
-            "Students": self.students
+            "Students": list(self.students.keys())
         }
         return scholarship_dict
     
     @classmethod
-    def from_dict(cls, data, headers):
+    def from_dict(cls, data, headers, studentTab):
         scholarship = cls(
             headers,
-            ScholarshipBudget.from_dict(data['budget']),
-            data['scholarship_id'],
-            data['name'],
-            data['num_awards'],
-            data['priority']
+            ScholarshipBudget.from_dict(data['Budget']),
+            data['Scholarship ID'],
+            data['Name'],
+            data['Number of Awards Allowed'],
+            data['Priority']
         )
-        scholarship.criteria = data['criteria']
-        scholarship.awards = data['awards']
-        scholarship.studentOrder = data['studentOrder']
-        scholarship.students = {k: Student.from_dict(v, headers) for k, v in data['students'].items()}
+        scholarship.criteria = data['Criteria']
+        scholarship.awards = data['Awards']
+        scholarship.studentOrder = data['Student Order']
+        scholarship.students = {student_id: studentTab[student_id] for student_id in data['Students']}
         return scholarship
+
+            
     
     @property
     def budget(self):

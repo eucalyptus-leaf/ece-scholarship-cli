@@ -10,6 +10,8 @@ venv/
 # Visual Studio Code
 .vscode/
 
+# Hidden Files
+.local/
 
 # Standard gitignore
 # Byte-compiled / optimized / DLL files

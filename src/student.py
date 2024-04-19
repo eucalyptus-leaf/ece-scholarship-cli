@@ -1,4 +1,6 @@
-from library.budget_system import StudentBudget
+from src.budget_system import StudentBudget
+import pandas as pd
+import datetime
 
 """
 This module contains the Student class which represents a student.
@@ -36,6 +38,8 @@ class Student:
         self.awarded = dict()
         self.attributes = dict()
 
+    
+
     def to_dict(self):
         return {
             "first_name": self.first_name,
@@ -47,8 +51,17 @@ class Student:
             "budget": self._budget.to_dict(),
             "priority": self.priority,
             "awarded": self.awarded,
-            "attributes": self.attributes
+            "attributes": {key: self._convert_value(value) for key, value in self.attributes.items()}
         }
+    
+    def _convert_value(self, value):
+        """
+        Convert non-JSON serializable objects to a JSON-serializable format.
+        Specifically handle pandas.Timestamp objects here.
+        """
+        if isinstance(value, (pd.Timestamp, datetime.datetime)):
+            return value.isoformat()  # Convert Timestamp to ISO format string
+        return value
     
     @classmethod
     def from_dict(cls, data, headers):
@@ -64,8 +77,19 @@ class Student:
         )
         student.priority = data['priority']
         student.awarded = data['awarded']
-        student.attributes = data['attributes']
+        student.attributes = {key: cls._revert_value(value) for key, value in data['attributes'].items()}
         return student
+    
+    @classmethod
+    def _revert_value(cls, value):
+        """
+        Revert values from string format back to their original types if necessary.
+        Specifically handle converting ISO format strings back to pandas.Timestamp.
+        """
+        try:
+            pd.to_datetime(value)
+        except ValueError:
+            return value
 
     @property
     def ids(self):

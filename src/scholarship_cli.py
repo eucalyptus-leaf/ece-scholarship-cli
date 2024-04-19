@@ -14,26 +14,25 @@ Jan 2024
 -------------------------------------------------------------------"""
 
 # Import necessary libraries
-import sys
 import os
 import pandas as pd 
 import json
 # Now you can import your modules
-from library.hashtab import Hashtab
-from library.student import Student
-from library.scholarship import Scholarship
-from library.budget_system import BudgetSystem
-from library.import_data import Headers
-from library.import_data import import_students_from_file
-from library.import_data import import_scholarships_from_file
-from library.import_data import import_overview_scholarships_from_file
-from library.award_system import AwardSystem
+from src.hashtab import Hashtab
+from src.student import Student
+from src.scholarship import Scholarship
+from src.budget_system import BudgetSystem
+from src.import_data import Headers
+from src.import_data import import_students_from_file
+from src.import_data import import_scholarships_from_file
+from src.import_data import import_overview_scholarships_from_file
+from src.award_system import AwardSystem
 
 class CLI_system:
     # System Flags
     system_quit = False
 
-    def __init__(self, hidden_path, data_path, config_path, lib_path, src_path):
+    def __init__(self, hidden_path, data_path, config_path):
         #----------------------------------------------------------
         # Function to initialize the CLI system
         #----------------------------------------------------------
@@ -53,22 +52,14 @@ class CLI_system:
         self._hiddenPath = hidden_path
         self.dataPath = data_path
         self.configPath = config_path
-        self.libPath = lib_path
-        self.srcPath = src_path
-        #self.system_initialized = os.path.exists(os.path.join(self._hiddenPath, "system_state"))
-        self.system_initialized = False
+        self.system_initialized = os.path.exists(os.path.join(self._hiddenPath, "system_state.json"))
 
         # Create the Data Stuctures
         self.studentTab = Hashtab()
-        print("Student Table Structure Created")
         self.scholarshipTab = Hashtab()
-        print("Scholarship Table Structure Created")
         self.budget = BudgetSystem()
-        print("Department Budget System Created")
         self.awards = AwardSystem()
-        print("Awards System Created")
         self.headers = Headers()
-        print("Header Tracker Created")
 
         if self.system_initialized:
             print("Restoring Prior System State...")
@@ -94,8 +85,10 @@ class CLI_system:
             state = json.load(file)
         self.headers = Headers.from_dict(state["headers"])
         self.budget = BudgetSystem.from_dict(state["budget"])
-        self.studentTab = Hashtab({student_id: Student.from_dict(data, self.headers) for student_id, data in state["students"].items()})
-        self.scholarshipTab = Hashtab({scholarship_id: Scholarship.from_dict(data, self.headers) for scholarship_id, data in state["scholarships"].items()})
+        self.studentTab = Hashtab()
+        self.studentTab.table = {student_id: Student.from_dict(data, self.headers) for student_id, data in state["students"].items()}
+        self.scholarshipTab = Hashtab()
+        self.scholarshipTab.table = {scholarship_id: Scholarship.from_dict(data, self.headers, self.studentTab) for scholarship_id, data in state["scholarships"].items()}
         self.awards = AwardSystem.from_dict(state["awards"])
         print("Prior System State Restored. Use system menu options to modify scholarship and student data.\n")
 
@@ -106,9 +99,23 @@ class CLI_system:
         #----------------------------------------------------------
 
         if self.system_initialized is False:
-            self.headers.normalize_and_save_headers(os.path.join(self.configPath, "headers.txt"), os.path.join(self.configPath, "normalized_headers.txt"), False)
-            self.headers.normalize_and_save_headers(os.path.join(self.configPath, "overview_headers.txt"), os.path.join(self.configPath, "normalized_overview_headers.txt"), True)
+            #self.headers.normalize_and_save_headers(os.path.join(self.configPath, "headers.txt"), os.path.join(self.configPath, "normalized_headers.txt"), False)
+            #self.headers.normalize_and_save_headers(os.path.join(self.configPath, "overview_headers.txt"), os.path.join(self.configPath, "normalized_overview_headers.txt"), True)
+            self.headers.normalized_headers = [self.headers._normalize_header(header) for header in self.headers.headers]
+            self.headers.header_map = {i : header for i, header in enumerate(self.headers.headers)}
+            self.headers.normalized_overview_headers = [self.headers._normalize_header(header) for header in self.headers.overview_headers]
+            self.headers.overview_header_map = {i : header for i, header in enumerate(self.headers.overview_headers)}
+
             # Import the data
+            print("Please add the General Scholarship Application excel or csv file to the general_application folder in the data directory.")
+            print("Please edit the scholarship_overview_template.xlsx file in the data/scholarships/overview directory.")
+            print("Please add all scholarship excels or csvs referenced in the scholarship_overview_template.xlsx to the scholarships folder in the data directory.")
+            print()
+            response = input("Have you added and edited the files indicated in the instructions above (y/n): ").strip().lower()
+            if response == 'n' or response == 'no':
+                print("Please add and edit the files as indicated and restart the program.")
+                print("Exiting Program. Goodbye!\n")
+                return
             import_students_from_file(self.headers, self.budget, os.path.join(self.dataPath, "general_application"), self.studentTab)
             print("Imported Students\n")
             import_scholarships_from_file(self.headers, self.budget, os.path.join(self.dataPath, "scholarships"), self.scholarshipTab, self.studentTab)
@@ -136,7 +143,7 @@ class CLI_system:
 
             choice = input("Menu Choice: ").strip().lower()
 
-            if choice == '1': # Print Scholarship Information
+            if choice == '1' or choice == 'printscholarship' or choice == 'printscholarshipinfo' or choice == 'printscholarshipinformation': # Print Scholarship Information
                 print_menu_option1()
                 choice = input("Option Choice: ").strip().lower()
 
@@ -237,11 +244,12 @@ class CLI_system:
                     
                 elif choice == 'q' or choice == '11' or choice == 'quit' or choice == 'exit': # Quit
                     self.system_quit = True
+                    self.save_state()
                 
                 else: # Invalid Choice
                     print("Invalid Choice. Returning to Main Menu. Try Again\n")
 
-            elif choice == '2': # Print Student Information
+            elif choice == '2' or choice == 'printstudent' or choice == 'printstudentinfo' or choice == 'printstudentinformation': # Print Student Information
                 print_menu_option2()
                 choice = input("Option Choice: ").strip().lower()
                 if choice == 'h' or choice == '12' or choice == 'help': # Help
@@ -339,11 +347,12 @@ class CLI_system:
 
                 elif choice == 'q' or choice == '11' or choice == 'quit' or choice == 'exit': # Quit
                     self.system_quit = True
+                    self.save_state()
 
                 else: # Invalid Choice
                     print("Invalid Choice. Returning to Main Menu. Try Again\n")
                 
-            elif choice == '3': # Save Information as a File
+            elif choice == '3' or choice == 'save' or choice == 'saveinfo' or choice == 'saveinformation' or choice == 'saveinformationasafile': # Save Information as a File
                 print_menu_option3()
                 choice = input("Option Choice: ").strip().lower()
                 if choice == 'h' or choice == '4' or choice == 'help': # Help
@@ -365,11 +374,12 @@ class CLI_system:
 
                 elif choice == 'q' or choice == '3' or choice == 'quit' or choice == 'exit': # Quit
                     self.system_quit = True
+                    self.save_state()
 
                 else: # Invalid Choice
                     print("Invalid Choice. Returning to Main Menu. Try Again\n")
 
-            elif choice == '4': # Modify Data
+            elif choice == '4' or choice == 'modify' or choice == 'modifydata': # Modify Data
                 print_menu_option4()
                 choice = input("Option Choice: ").strip().lower()
                 if choice == 'h' or choice == '7' or choice == 'help': # Help
@@ -387,11 +397,19 @@ class CLI_system:
                     continue
                 elif choice == 'q' or choice == '6' or choice == 'quit' or choice == 'exit': # Quit
                     self.system_quit = True
+                    self.save_state()
                 else:
                     print("Invalid Choice. Returning to Main Menu. Try Again\n")
 
+            elif choice == 'r' or choice == 'reset' or choice == 'resetsystem': # Reset System
+                print("Resetting System State")
+                self.system_quit = True
+                os.remove(os.path.join(self._hiddenPath, "system_state.json"))
+                print("System State Reset. Exiting Program. Goodbye!\n")
+
             elif choice == 'q' or choice == '5' or choice == 'quit' or choice == 'exit': # Quit
                 self.system_quit = True
+                self.save_state()
 
             elif choice == 'h' or choice == '6' or choice == 'help': # Help
                 print_main_menu(help=True)
@@ -401,28 +419,8 @@ class CLI_system:
                 print("Invalid Choice. Try Again\n")
 
         print("\nSaving System State")
-        # if self.system_quit:
-            #self.save_state()
         print("Thank you for using the Scholarship Program!")
         print("Exiting Program. Goodbye!\n")
-
-    def print_scholarship_information(self, scholarship, level):
-        pass
-
-    def print_student_information(self, student, level):
-        pass
-
-    def print_student_award_list(self, student):
-        pass
-
-    def print_scholarship_award_list(self, scholarship):
-        pass
-
-    def save_information(self):
-        pass
-
-    def modify_data(self):
-        pass
 
     def process_id_input(self, id, type, count):
         ret = False
@@ -464,24 +462,6 @@ class CLI_system:
         
         return ret
 
-
-def print_welcome():
-    #----------------------------------------------------------
-    # Function to print greeting message at the beginning
-    #----------------------------------------------------------
-    print("|************************************************************************|")
-    print("|                                                                        |")
-    print("|            ------------------------------------------------            |")
-    print("|                    Welcome to the Scholarship Program                  |")
-    print("|            ------------------------------------------------            |")
-    print("|                FA23-SP24 ECE-485 Senior Design Project                 |")
-    print("|                    North Carolina State University                     |")
-    print("|                                                                        |")
-    print("|        Copyright:  Gavin Jones, Loevan Bost, Priya Tella, Josh Turki   |")
-    print("|                    Contact: copyright@gavinjones.me                    |")
-    print("|                                                                        |")
-    print("|************************************************************************|\n")
-
 def print_main_menu(help=False):
     #----------------------------------------------------------
     # Function to print out Main Menu Options and Help
@@ -492,12 +472,18 @@ def print_main_menu(help=False):
         print("\t2. Print Student Information")
         print("\t3. Save Information as a File")
         print("\t4. Modify Data")
+        print("\tR. Reset System")
         print("\tQ. Quit")
         print("\tH. Help")
     else:
         print('Main Menu Help Menu:')
         print('********************')
-        print()
+        print("Option 1 - Print an individual scholarship's or all scholarships' information.")
+        print("Option 2 - Print an individual student's or all students' information.")
+        print("Option 3 - Save scholarship or student award information to a file in the data/output directory.")
+        print("Option 4 - Modify student or scholarship data.")
+        print("Option R - Reset the system to the initial state allowing for re-importing of data from the data directory.")
+        print("Option Q - Quit the program. Saves the system state before exiting.")
 
 def print_menu_option1(help=False):
     if help is False:
@@ -520,6 +506,17 @@ def print_menu_option1(help=False):
     else:
         print('Scholarship Info Help Menu')
         print('**************************')
+        print("Option 1 - Print basic information about an individual scholarship.")
+        print("Option 2 - Print comprehensive information about an individual scholarship.")
+        print("Option 3 - Print the name and ID of an individual scholarship.")
+        print("Option 4 - Print the students qualified for an individual scholarship.")
+        print("Option 5 - Print the students awarded an individual scholarship.")
+        print("Option 6 - Print basic information about all scholarships.")
+        print("Option 7 - Print comprehensive information about all scholarships.")
+        print("Option 8 - Print the name and ID of all scholarships.")
+        print("Option 9 - Print the students qualified for all scholarships.")
+        print("Option 10 - Print the students awarded by all scholarships.")
+        print("Option Q - Quit the program. Saves the system state before exiting.")
 
 def print_menu_option2(help=False):
     if help is False:
@@ -542,6 +539,17 @@ def print_menu_option2(help=False):
     else:
         print("Student Info Help Menu")
         print('**********************')
+        print("Option 1 - Print basic information about an individual student.")
+        print("Option 2 - Print comprehensive information about an individual student.")
+        print("Option 3 - Print the name and IDs of an individual student.")
+        print("Option 4 - Print the scholarships qualified for by an individual student.")
+        print("Option 5 - Print the scholarships awarded to an individual student.")
+        print("Option 6 - Print basic information about all students.")
+        print("Option 7 - Print comprehensive information about all students.")
+        print("Option 8 - Print the name and IDs of all students.")
+        print("Option 9 - Print the scholarships qualified for by all students.")
+        print("Option 10 - Print the scholarships awarded to all students.")
+        print("Option Q - Quit the program. Saves the system state before exiting.")
 
 def print_menu_option3(help=False):
     if help is False:
@@ -555,6 +563,9 @@ def print_menu_option3(help=False):
     else:
         print("Save Information Help Menu")
         print('*************************')
+        print ("Option 1 - Save scholarship award information to a file named scholarship_awards.txt in the data/output directory.")
+        print ("Option 2 - Save student award information to a file named student_awards.txt in the data/output directory.")
+        print ("Option Q - Quit the program. Saves the system state before exiting.")
 
 def print_menu_option4(help=False):
     if help is False:
@@ -571,3 +582,9 @@ def print_menu_option4(help=False):
     else:
         print("Modify Data Help Menu")
         print('*********************')
+        print("Option 1 - Award a student a scholarship.")
+        print("Option 2 - Remove a student's scholarship.")
+        print("Option 3 - Edit a student's budget.")
+        print("Option 4 - Edit a scholarship's budget.")
+        print("Option 5 - Change a scholarship's priority.")
+        print("Option Q - Quit the program. Saves the system state before exiting.")

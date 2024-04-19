@@ -8,7 +8,7 @@
 
 class Hashtab:
     def __init__(self):
-         """ Description: Initialize new hash table with empty dictionary.
+        """ Description: Initialize new hash table with empty dictionary.
             Args: None
             Returns: None
             Error State: None
@@ -101,6 +101,14 @@ class Hashtab:
             Error State: None
         """
         return len(self.table)
+    
+    def keys(self):
+        """ Description: Returns a list of keys in the hash table.
+            Args: None
+            Returns: List of keys in hash table
+            Error State: None
+        """
+        return list(self.table.keys())
 
     def __iter__(self):
         """ Description: Returns an iterator over the keys in the hash table.
