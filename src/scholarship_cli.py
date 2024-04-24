@@ -404,7 +404,8 @@ class CLI_system:
             elif choice == 'r' or choice == 'reset' or choice == 'resetsystem': # Reset System
                 print("Resetting System State")
                 self.system_quit = True
-                os.remove(os.path.join(self._hiddenPath, "system_state.json"))
+                if os.path.exists(os.path.join(self._hiddenPath, "system_state.json")):
+                    os.remove(os.path.join(self._hiddenPath, "system_state.json"))
                 print("System State Reset. Exiting Program. Goodbye!\n")
 
             elif choice == 'q' or choice == '5' or choice == 'quit' or choice == 'exit': # Quit

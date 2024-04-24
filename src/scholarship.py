@@ -65,7 +65,6 @@ class Scholarship:
         return scholarship
 
             
-    
     @property
     def budget(self):
         """
