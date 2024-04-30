@@ -18,15 +18,15 @@ import os
 import pandas as pd 
 import json
 # Now you can import your modules
-from src.hashtab import Hashtab
-from src.student import Student
-from src.scholarship import Scholarship
-from src.budget_system import BudgetSystem
-from src.import_data import Headers
-from src.import_data import import_students_from_file
-from src.import_data import import_scholarships_from_file
-from src.import_data import import_overview_scholarships_from_file
-from src.award_system import AwardSystem
+from hashtab import Hashtab
+from student import Student
+from scholarship import Scholarship
+from budget_system import BudgetSystem
+from import_data import Headers
+from import_data import import_students_from_file
+from import_data import import_scholarships_from_file
+from import_data import import_overview_scholarships_from_file
+from award_system import AwardSystem
 
 class CLI_system:
     # System Flags

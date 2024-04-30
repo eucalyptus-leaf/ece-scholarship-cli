@@ -2,8 +2,8 @@
 import os
 import re
 import pandas as pd
-from src.student import Student
-from src.scholarship import Scholarship
+from student import Student
+from scholarship import Scholarship
 
 class Headers:
     def __init__(self):

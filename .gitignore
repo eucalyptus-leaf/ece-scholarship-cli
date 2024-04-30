@@ -4,8 +4,9 @@ data/
 # Apple Hidden Files
 .DS_Store
 
-# Virtula Environment
+# Virtual Environment
 venv/
+.venv/
 
 # Visual Studio Code
 .vscode/

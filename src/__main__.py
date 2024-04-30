@@ -46,13 +46,13 @@ def main():
 
 	if not frozen:
 		print("Running directly from Python script, checking dependencies...")
-		from src.version_control import version_control as vc
+		from version_control import version_control as vc
 		vc(config_path / 'dependencies.txt') # System Version Control...Check and install dependencies
 
 	# Import Custom Modules
-	from src.scholarship_cli import CLI_system
+	from scholarship_cli import CLI_system
 	# Import Custom Functions
-	from src.init_fs import init_fs as ifs
+	from init_fs import init_fs as ifs
 
 	hidden_path = ifs(str(project_path), str(data_path), str(config_path)) # Initialize the project file structure
 

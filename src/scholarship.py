@@ -1,5 +1,5 @@
-from src.budget_system import ScholarshipBudget
-from src.student import Student
+from budget_system import ScholarshipBudget
+from student import Student
 import pandas as pd
 """
 This module contains the Scholarship class which represents a scholarship.

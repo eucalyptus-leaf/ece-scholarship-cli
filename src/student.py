@@ -1,4 +1,4 @@
-from src.budget_system import StudentBudget
+from budget_system import StudentBudget
 import pandas as pd
 import datetime
 
