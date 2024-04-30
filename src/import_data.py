@@ -358,8 +358,8 @@ def import_scholarships_from_file(h, budget, folder_path, scholarshipTab, studen
                         student.application_id = row[h.get_header(1)] # Line 2 in headers.txt
                         student.email = row[h.get_header(6)] # Line 7 in headers.txt
 
-                        new_student_counter += 1 # TO-DO: remove before deployment...used for copying fake student data to excel
-                        generate_new_student_id_for_new_student(student, new_student_counter) # TO-DO: remove before deployment...used for copying fake student data to excel
+                        #new_student_counter += 1 # TO-DO: remove before deployment...used for copying fake student data to excel
+                        #generate_new_student_id_for_new_student(student, new_student_counter) # TO-DO: remove before deployment...used for copying fake student data to excel
                         
                         for header in df.columns:
                             student.attributes[header] = row[header]
